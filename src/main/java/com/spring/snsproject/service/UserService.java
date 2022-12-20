@@ -1,5 +1,6 @@
 package com.spring.snsproject.service;
 
+import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.UserDto;
 import com.spring.snsproject.domain.dto.UserJoinRequest;
 import com.spring.snsproject.domain.entity.User;
@@ -25,7 +26,7 @@ public class UserService {
         });
 
         // DB에 이름, 비밀번호(인코딩) 저장
-        User user = userRepository.save(userJoinRequest.toEntity(encoder.encode(userJoinRequest.getPassword())));
+        User user = userRepository.save(userJoinRequest.toEntity(encoder.encode(userJoinRequest.getPassword()), UserRole.USER));
 
         return UserDto.builder()
                 .id(user.getId())
