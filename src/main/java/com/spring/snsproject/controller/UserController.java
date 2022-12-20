@@ -1,5 +1,6 @@
 package com.spring.snsproject.controller;
 
+import com.spring.snsproject.domain.Response;
 import com.spring.snsproject.domain.dto.UserDto;
 import com.spring.snsproject.domain.dto.UserJoinRequest;
 import com.spring.snsproject.domain.dto.UserJoinResponse;
@@ -19,8 +20,8 @@ public class UserController {
 
     private final UserService userService;
     @PostMapping("/join")
-    public ResponseEntity join(@RequestBody UserJoinRequest userJoinRequest){
+    public Response join(@RequestBody UserJoinRequest userJoinRequest){
         UserDto userDto = userService.join(userJoinRequest);
-        return ResponseEntity.ok().body(new UserJoinResponse(userDto.getUserName()));
+        return Response.success(new UserJoinResponse(userDto.getId(), userDto.getUserName()));
     }
 }
