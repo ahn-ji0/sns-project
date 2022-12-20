@@ -11,6 +11,10 @@ spring:
     username: root
     password: 1234
 
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+
   jpa:
     hibernate:
       ddl-auto: update
