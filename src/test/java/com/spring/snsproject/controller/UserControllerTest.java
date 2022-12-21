@@ -1,8 +1,11 @@
 package com.spring.snsproject.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.snsproject.domain.dto.UserDto;
 import com.spring.snsproject.domain.dto.UserJoinRequest;
+import com.spring.snsproject.domain.dto.UserLoginRequest;
+import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.UserService;
@@ -51,7 +54,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").exists())                .andExpect(jsonPath("$.resultCode").exists())
+                .andExpect(jsonPath("$.resultCode").exists())
                 .andExpect(jsonPath("$.result.userId").exists())
                 .andExpect(jsonPath("$.result.userName").exists())
                 .andDo(print());
@@ -73,4 +76,51 @@ class UserControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("로그인 성공")
+    @WithMockUser
+    void loginSuccess() throws Exception {
+        UserLoginRequest request = new UserLoginRequest("개발자","1234");
+
+        given(userService.login(any())).willReturn("test token");
+
+        mockMvc.perform(post("/api/v1/users/login").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.jwt").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - userName 존재하지 않음")
+    @WithMockUser
+    void loginFailUserName() throws Exception {
+        UserLoginRequest request = new UserLoginRequest("개발자","1234");
+
+        given(userService.login(any())).willThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND,""));
+
+        mockMvc.perform(post("/api/v1/users/login").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.resultCode").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 실패 - password 일치하지 않음")
+    @WithMockUser
+    void loginFailPassword() throws Exception {
+        UserLoginRequest request = new UserLoginRequest("개발자","1234");
+
+        given(userService.login(any())).willThrow(new AppException(ErrorCode.INVALID_PASSWORD,""));
+
+        mockMvc.perform(post("/api/v1/users/login").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.resultCode").exists())
+                .andDo(print());
+    }
 }
