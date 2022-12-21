@@ -20,3 +20,5 @@ spring:
       ddl-auto: update
 
     show-sql: true
+
+jwt.secret.key: example
