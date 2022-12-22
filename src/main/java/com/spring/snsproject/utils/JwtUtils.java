@@ -19,4 +19,16 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
+
+    private static Claims extractClaims(String token, String secretKey){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    }
+    public static boolean isExpired(String token, String secretKey) {
+        Date expiredDate = extractClaims(token, secretKey).getExpiration();
+        return expiredDate.before(new Date());
+    }
+
+    public static String getUserName(String token, String secretKey){
+        return extractClaims(token,secretKey).get("userName").toString();
+    }
 }
