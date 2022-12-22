@@ -3,15 +3,17 @@ package com.spring.snsproject.domain.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @AllArgsConstructor
 @Getter
 @Builder
+@NoArgsConstructor
 public class PostDto {
     private Long id;
-    private Long userId;
+    private String userName;
     private String title;
     private String body;
     private Timestamp createdAt;

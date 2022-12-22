@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Slf4j
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +35,11 @@ public class Post {
     public static PostDto of(Post savedPost) {
         return PostDto.builder()
                 .id(savedPost.getId())
-                .userId(savedPost.getUser().getId())
+                .userName(savedPost.getUser().getUserName())
                 .title(savedPost.getTitle())
                 .body(savedPost.getBody())
                 .createdAt(savedPost.getCreatedAt())
+                .lastModifiedAt(savedPost.getLastModifiedAt())
                 .build();
     }
 }

@@ -9,10 +9,12 @@ import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostService {
 
     private final UserRepository userRepository;
@@ -23,6 +25,12 @@ public class PostService {
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
 
         Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
+        return Post.of(savedPost);
+    }
+
+    public PostDto getOne(long postId) {
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%s번 포스트는 존재하지 않습니다.",postId)));
         return Post.of(savedPost);
     }
 }
