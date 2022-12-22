@@ -21,9 +21,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @Column(name = "user_id")
-//    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String title;
     private String body;
@@ -33,6 +33,7 @@ public class Post {
     public static PostDto of(Post savedPost) {
         return PostDto.builder()
                 .id(savedPost.getId())
+                .userId(savedPost.getUser().getId())
                 .title(savedPost.getTitle())
                 .body(savedPost.getBody())
                 .createdAt(savedPost.getCreatedAt())

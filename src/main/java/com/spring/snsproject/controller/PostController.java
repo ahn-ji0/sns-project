@@ -6,6 +6,7 @@ import com.spring.snsproject.domain.dto.PostWriteResponse;
 import com.spring.snsproject.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +21,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping()
-    public Response post(@RequestBody PostWriteRequest postWriteRequest){
-        PostDto postDto = postService.write(postWriteRequest);
+    public Response post(@RequestBody PostWriteRequest postWriteRequest, Authentication authentication){
+        PostDto postDto = postService.write(postWriteRequest, authentication.getName());
         return Response.success(new PostWriteResponse("포스트 등록 완료",postDto.getId()));
     }
 }

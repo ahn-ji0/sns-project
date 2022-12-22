@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Builder
 public class PostDto {
     private Long id;
-//    private Long userId;
+    private Long userId;
     private String title;
     private String body;
     private Timestamp createdAt;

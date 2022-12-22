@@ -13,9 +13,9 @@ public class PostWriteRequest {
     private String title;
     private String body;
 
-    public Post toEntity() {
+    public Post toEntity(User user) {
         return Post.builder()
-//                .user(user)
+                .user(user)
                 .title(this.title)
                 .body(this.body)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
