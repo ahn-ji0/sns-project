@@ -23,8 +23,8 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인 기능", notes = "가입했던 유저 이름과 비밀번호를 입력하세요.")
-    public ResponseEntity login(@RequestBody UserLoginRequest userLoginRequest){
+    public Response login(@RequestBody UserLoginRequest userLoginRequest){
         String jwt = userService.login(userLoginRequest);
-        return ResponseEntity.ok().body(new TokenResponse(jwt));
+        return Response.success(new TokenResponse(jwt));
     }
 }
