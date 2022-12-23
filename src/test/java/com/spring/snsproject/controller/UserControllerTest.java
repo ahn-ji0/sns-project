@@ -88,7 +88,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.jwt").exists())
+                .andExpect(jsonPath("$.result.jwt").exists())
                 .andDo(print());
     }
 
