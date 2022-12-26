@@ -42,4 +42,8 @@ public class Post {
                 .lastModifiedAt(savedPost.getLastModifiedAt())
                 .build();
     }
+    public void editPost(String title, String body){
+        this.title = title;
+        this.body = body;
+    }
 }
