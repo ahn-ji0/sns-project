@@ -38,4 +38,10 @@ public class User {
                 .deletedAt(user.getDeletedAt())
                 .build();
     }
+
+    public User changeRole(UserRole userRole){
+        this.role = userRole;
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
+        return this;
+    }
 }

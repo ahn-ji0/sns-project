@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                 .cors().and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
+                .antMatchers("/api/v1/users/{id}/role/change").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.POST,"/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.PUT,"/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.DELETE,"/api/v1/**").authenticated()
