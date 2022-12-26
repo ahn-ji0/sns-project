@@ -5,8 +5,13 @@ import com.spring.snsproject.service.PostService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
+
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -21,6 +26,13 @@ public class PostController {
     public Response write(@RequestBody PostWriteRequest postWriteRequest, Authentication authentication){
         PostDto postDto = postService.write(postWriteRequest, authentication.getName());
         return Response.success(new PostResponse("포스트 등록 완료",postDto.getId()));
+    }
+
+    @GetMapping()
+    @ApiOperation(value="포스트 조회 기능")
+    public Response getAll(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<PostDto> postGetResponse = postService.getAll(pageable);
+        return Response.success(postGetResponse.map(postDto -> PostGetResponse.of(postDto)));
     }
 
     @GetMapping("/{postId}")

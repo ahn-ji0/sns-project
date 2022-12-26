@@ -12,8 +12,9 @@ import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -72,5 +73,17 @@ public class PostService {
             throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트를 삭제할 수 없습니다."));
         }
         return savedPost.getId();
+    }
+
+    public Page<PostDto> getAll(Pageable pageable) {
+        Page<Post> posts = null;
+        try{
+            posts = postRepository.findAll(pageable);
+        } catch (Exception e){
+            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트 리스트를 불러올 수 없습니다."));
+        }
+
+        Page<PostDto> postGetResponses = posts.map(post -> Post.of(post));
+        return postGetResponses;
     }
 }
