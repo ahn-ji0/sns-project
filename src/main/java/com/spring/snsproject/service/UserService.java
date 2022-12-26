@@ -1,6 +1,7 @@
 package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.UserRole;
+import com.spring.snsproject.domain.dto.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.UserDto;
 import com.spring.snsproject.domain.dto.UserJoinRequest;
 import com.spring.snsproject.domain.dto.UserLoginRequest;
@@ -61,5 +62,22 @@ public class UserService {
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
                 .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
+    }
+
+    public UserDto changeRole(Long id, RoleChangeRequest roleChangeRequest) {
+        User savedUser = userRepository.findById(id).orElseThrow(()->
+                new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
+        String role = roleChangeRequest.getRole();
+
+        if(role.equals("admin")){
+            savedUser.changeRole(UserRole.ADMIN);
+        } else if (role.equals("user")) {
+            savedUser.changeRole(UserRole.USER);
+        } else{
+            throw new AppException(ErrorCode.INVALID_ROLE, "admin 혹은 user 중 하나를 입력해주세요.");
+        }
+
+        User roleChangedUser =  userRepository.save(savedUser);
+        return User.of(roleChangedUser);
     }
 }

@@ -1,16 +1,19 @@
 package com.spring.snsproject.controller;
 
 import com.spring.snsproject.domain.Response;
+import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.*;
 import com.spring.snsproject.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -26,5 +29,11 @@ public class UserController {
     public Response login(@RequestBody UserLoginRequest userLoginRequest){
         String jwt = userService.login(userLoginRequest);
         return Response.success(new TokenResponse(jwt));
+    }
+
+    @PostMapping("{id}/role/change")
+    public Response changeRole(@PathVariable Long id, @RequestBody RoleChangeRequest roleChangeRequest){
+        UserDto userDto = userService.changeRole(id, roleChangeRequest);
+        return Response.success(new RoleChangeResponse(userDto.getId(), userDto.getUserName(), userDto.getRole()));
     }
 }
