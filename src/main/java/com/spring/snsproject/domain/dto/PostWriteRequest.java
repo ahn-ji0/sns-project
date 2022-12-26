@@ -14,11 +14,14 @@ public class PostWriteRequest {
     private String body;
 
     public Post toEntity(User user) {
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+
         return Post.builder()
                 .user(user)
                 .title(this.title)
                 .body(this.body)
-                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .createdAt(currentTime)
+                .lastModifiedAt(currentTime)
                 .build();
     }
 }

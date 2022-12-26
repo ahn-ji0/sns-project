@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 @AllArgsConstructor
 @Getter
@@ -14,18 +15,20 @@ public class PostGetResponse {
     private String title;
     private String body;
     private String userName;
-    private Timestamp createdAt;
-    private Timestamp lastModifiedAt;
+    private String createdAt;
+    private String lastModifiedAt;
 
 
     public static PostGetResponse of(PostDto postDto) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+
         return PostGetResponse.builder()
                 .id(postDto.getId())
                 .title(postDto.getTitle())
                 .body(postDto.getBody())
                 .userName(postDto.getUserName())
-                .createdAt(postDto.getCreatedAt())
-                .lastModifiedAt(postDto.getLastModifiedAt())
+                .createdAt(format.format(postDto.getCreatedAt()))
+                .lastModifiedAt(format.format(postDto.getLastModifiedAt()))
                 .build();
     }
 }
