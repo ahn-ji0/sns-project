@@ -11,6 +11,6 @@ public class AppException extends RuntimeException {
 
     @Override
     public String toString() {
-        return String.format("%s: %s",this.errorCode.getErrorName(), this.message);
+        return String.format("%s %s",this.errorCode.getErrorName(), this.message);
     }
 }
