@@ -1,6 +1,7 @@
 package com.spring.snsproject.exception;
 
 import com.spring.snsproject.domain.Response;
+import com.spring.snsproject.domain.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,6 @@ public class ExceptionManager {
     @ExceptionHandler(AppException.class)
     public ResponseEntity<?> appExceptionHandler(AppException e){
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(Response.error(e.toString()));
+                .body(Response.error(new ErrorResponse(e.getErrorCode().getHttpStatus().name(), e.toString())));
     }
 }
