@@ -1,6 +1,7 @@
 package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.dto.PostDto;
+import com.spring.snsproject.domain.dto.PostEditRequest;
 import com.spring.snsproject.domain.dto.PostWriteRequest;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
@@ -28,9 +29,43 @@ public class PostService {
         return Post.of(savedPost);
     }
 
-    public PostDto getOne(long postId) {
+    public PostDto getOne(Long postId) {
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%s번 포스트는 존재하지 않습니다.",postId)));
         return Post.of(savedPost);
+    }
+
+    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
+        // 포스트 존재 여부
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
+        
+        // 유저 일치 여부(권한)
+        if(!userName.equals(savedPost.getUser().getUserName())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",userName));
+        }
+
+        // 수정, 저장
+        savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
+        Post editedPost = postRepository.save(savedPost);
+        return Post.of(editedPost);
+    }
+
+    public Long delete(Long postId, String userName) {
+        // 포스트 존재 여부
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
+
+        // 유저 일치 여부(권한)
+        if(!userName.equals(savedPost.getUser().getUserName())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 삭제할 수 없습니다.",userName));
+        }
+        // 삭제
+        try{
+            postRepository.delete(savedPost);
+        }catch (Exception e){
+            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트를 삭제할 수 없습니다."));
+        }
+        return savedPost.getId();
     }
 }

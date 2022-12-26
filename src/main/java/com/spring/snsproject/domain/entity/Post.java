@@ -1,8 +1,6 @@
 package com.spring.snsproject.domain.entity;
 
-import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.PostDto;
-import com.spring.snsproject.domain.dto.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,5 +39,10 @@ public class Post {
                 .createdAt(savedPost.getCreatedAt())
                 .lastModifiedAt(savedPost.getLastModifiedAt())
                 .build();
+    }
+    public void editPost(String title, String body){
+        this.title = title;
+        this.body = body;
+        this.lastModifiedAt = new Timestamp(System.currentTimeMillis());
     }
 }
