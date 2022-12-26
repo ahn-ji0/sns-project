@@ -34,6 +34,8 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.PUT,"/api/v1/**").authenticated()
                 .antMatchers(HttpMethod.DELETE,"/api/v1/**").authenticated()
                 .and()
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

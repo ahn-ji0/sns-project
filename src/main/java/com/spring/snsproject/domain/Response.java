@@ -9,8 +9,8 @@ public class Response<T> {
     private String resultCode;
     private T result;
 
-    public static Response error(String message){
-        return new Response(message, null);
+    public static <T> Response error(T data){
+        return new Response("ERROR", data);
     }
 
     public static <T> Response success(T data){
