@@ -29,13 +29,13 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public Response edit(@PathVariable Long postId, @RequestBody PostEditRequest postEditRequest, Authentication authentication){
-        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName());
+        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName(), authentication.getAuthorities());
         return Response.success(new PostResponse("포스트 수정 완료",postDto.getId()));
     }
 
     @DeleteMapping("/{postId}")
     public Response delete(@PathVariable Long postId, Authentication authentication){
-        Long deletedId = postService.delete(postId, authentication.getName());
+        Long deletedId = postService.delete(postId, authentication.getName(), authentication.getAuthorities());
         return Response.success(new PostResponse("포스트 삭제 완료", deletedId));
     }
 }

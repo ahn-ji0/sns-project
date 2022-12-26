@@ -1,5 +1,6 @@
 package com.spring.snsproject.service;
 
+import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.PostDto;
 import com.spring.snsproject.domain.dto.PostEditRequest;
 import com.spring.snsproject.domain.dto.PostWriteRequest;
@@ -11,7 +12,11 @@ import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
@@ -35,13 +40,13 @@ public class PostService {
         return Post.of(savedPost);
     }
 
-    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
+    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName, Collection<? extends GrantedAuthority> authorities) {
         // 포스트 존재 여부
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
-        
+
         // 유저 일치 여부(권한)
-        if(!userName.equals(savedPost.getUser().getUserName())){
+        if(!authorities.contains(new SimpleGrantedAuthority(UserRole.ADMIN.toString())) && !userName.equals(savedPost.getUser().getUserName())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",userName));
         }
 
@@ -51,13 +56,13 @@ public class PostService {
         return Post.of(editedPost);
     }
 
-    public Long delete(Long postId, String userName) {
+    public Long delete(Long postId, String userName, Collection<? extends GrantedAuthority> authorities) {
         // 포스트 존재 여부
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
 
         // 유저 일치 여부(권한)
-        if(!userName.equals(savedPost.getUser().getUserName())){
+        if(!authorities.contains(new SimpleGrantedAuthority(UserRole.ADMIN.toString())) && !userName.equals(savedPost.getUser().getUserName())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 삭제할 수 없습니다.",userName));
         }
         // 삭제
