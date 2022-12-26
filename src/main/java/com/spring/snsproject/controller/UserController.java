@@ -33,9 +33,7 @@ public class UserController {
 
     @PostMapping("{id}/role/change")
     public Response changeRole(@PathVariable Long id, @RequestBody RoleChangeRequest roleChangeRequest){
-        log.info("1");
         UserDto userDto = userService.changeRole(id, roleChangeRequest);
-        log.info("2");
         return Response.success(new RoleChangeResponse(userDto.getId(), userDto.getUserName(), userDto.getRole()));
     }
 }
