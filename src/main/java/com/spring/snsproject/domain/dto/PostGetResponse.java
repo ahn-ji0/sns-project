@@ -17,18 +17,4 @@ public class PostGetResponse {
     private String userName;
     private String createdAt;
     private String lastModifiedAt;
-
-
-    public static PostGetResponse of(PostDto postDto) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
-
-        return PostGetResponse.builder()
-                .id(postDto.getId())
-                .title(postDto.getTitle())
-                .body(postDto.getBody())
-                .userName(postDto.getUserName())
-                .createdAt(format.format(postDto.getCreatedAt()))
-                .lastModifiedAt(format.format(postDto.getLastModifiedAt()))
-                .build();
-    }
 }

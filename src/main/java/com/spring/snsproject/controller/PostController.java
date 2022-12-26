@@ -2,6 +2,7 @@ package com.spring.snsproject.controller;
 import com.spring.snsproject.domain.Response;
 import com.spring.snsproject.domain.dto.*;
 import com.spring.snsproject.service.PostService;
+import com.spring.snsproject.utils.DateUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,14 +33,17 @@ public class PostController {
     @ApiOperation(value="포스트 조회 기능")
     public Response getAll(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         Page<PostDto> postGetResponse = postService.getAll(pageable);
-        return Response.success(postGetResponse.map(postDto -> PostGetResponse.of(postDto)));
+        return Response.success(postGetResponse.map(postDto ->
+                new PostGetResponse(postDto.getId(), postDto.getTitle(), postDto.getBody(), postDto.getUserName(),
+                        DateUtils.dateFormat(postDto.getCreatedAt()), DateUtils.dateFormat(postDto.getLastModifiedAt()))));
     }
 
     @GetMapping("/{postId}")
     @ApiOperation(value="포스트 상세 조회 기능", notes ="상세 조회하려는 포스트의 id를 url에 입력하세요.")
     public Response getOne(@PathVariable Long postId){
         PostDto postDto = postService.getOne(postId);
-        return Response.success(PostGetResponse.of(postDto));
+        return Response.success(new PostGetResponse(postDto.getId(), postDto.getTitle(), postDto.getBody(), postDto.getUserName(),
+                DateUtils.dateFormat(postDto.getCreatedAt()), DateUtils.dateFormat(postDto.getLastModifiedAt())));
     }
 
     @PutMapping("/{postId}")
