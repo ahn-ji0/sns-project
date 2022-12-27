@@ -31,7 +31,12 @@ public class PostService {
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
 
-        Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
+        Post savedPost = null;
+        try {
+            savedPost = postRepository.save(postWriteRequest.toEntity(user));
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.DATABASE_ERROR,"DB에러가 발생하여 포스트를 작성할 수 없습니다.");
+        }
         return Post.of(savedPost);
     }
 
@@ -42,6 +47,10 @@ public class PostService {
     }
 
     public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName, Collection<? extends GrantedAuthority> authorities) {
+        //유저 존재 여부
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+
         // 포스트 존재 여부
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
@@ -53,11 +62,20 @@ public class PostService {
 
         // 수정, 저장
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
-        Post editedPost = postRepository.save(savedPost);
+        Post editedPost = null;
+        try {
+            editedPost = postRepository.save(savedPost);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트를 수정할 수 없습니다."));
+        }
         return Post.of(editedPost);
     }
 
     public Long delete(Long postId, String userName, Collection<? extends GrantedAuthority> authorities) {
+        //유저 존재 여부
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+
         // 포스트 존재 여부
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
