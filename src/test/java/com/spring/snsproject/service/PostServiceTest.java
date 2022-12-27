@@ -135,4 +135,33 @@ public class PostServiceTest {
             postService.edit(1l, postEditRequests, user.getUserName(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
         });
     }
+
+    @Test
+    @DisplayName("포스트 삭제 실패 테스트 - 유저가 존재하지 않을 때")
+    void deleteFail() {
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.delete(1l, "안지영", List.of(new SimpleGrantedAuthority(UserRole.USER.name())));
+        });
+    }
+
+    @Test
+    @DisplayName("포스트 삭제 실패 테스트 - 포스트 존재하지 않을 때")
+    void deleteFail2() {
+        User user = User.builder().id(1l).userName("안지영")
+                .role(UserRole.USER).build();
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.delete(1l, user.getUserName(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
+        });
+    }
 }
