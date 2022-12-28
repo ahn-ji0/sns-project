@@ -14,7 +14,7 @@ public enum ErrorCode {
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "사용자 권한이 없습니다." ),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DB에러" ),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 토큰입니다." ),
-    INVALID_ROLE(HttpStatus.NOT_FOUND, "존재하지 않는 Role입니다." );
+    INVALID_ROLE(HttpStatus.BAD_REQUEST, "존재하지 않는 Role입니다." );
 
     private HttpStatus httpStatus;
     private String errorName;
