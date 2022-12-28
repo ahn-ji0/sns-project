@@ -118,6 +118,23 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("포스트 작성 실패 테스트 - 인증 실패")
+    @WithMockUser
+    void writeFail() throws Exception {
+        long postId = 1l;
+        PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
+
+        given(postService.write(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다."));
+
+        mockMvc.perform(post("/api/v1/posts")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("포스트 수정 성공 테스트")
     @WithMockUser
     void editSuccess() throws Exception {
