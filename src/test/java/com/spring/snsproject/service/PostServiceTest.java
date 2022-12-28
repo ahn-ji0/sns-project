@@ -39,7 +39,7 @@ public class PostServiceTest {
     @DisplayName("포스트 등록 성공 테스트")
     void writeSuccess() {
         User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.USER).build();
+                .role(UserRole.ROLE_USER).build();
 
         PostWriteRequest postWriteRequest = new PostWriteRequest("제목입니다.", "내용입니다.");
 
@@ -84,7 +84,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.edit(1l, postEditRequests, "안지영", List.of(new SimpleGrantedAuthority(UserRole.USER.name())));
+            postService.edit(1l, postEditRequests, "안지영", List.of(new SimpleGrantedAuthority(UserRole.ROLE_USER.name())));
         });
     }
 
@@ -92,7 +92,7 @@ public class PostServiceTest {
     @DisplayName("포스트 수정 실패 테스트 - 포스트 존재하지 않을 때")
     void editFail2() {
         User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.USER).build();
+                .role(UserRole.ROLE_USER).build();
 
         PostEditRequest postEditRequests = new PostEditRequest("제목 수정합니다.", "내용 수정합니다.");
 
@@ -111,10 +111,10 @@ public class PostServiceTest {
     @DisplayName("포스트 수정 실패 테스트 - 작성자와 유저가 다를 때")
     void editFail3() {
         User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.USER).build();
+                .role(UserRole.ROLE_USER).build();
 
         User postWrittenUser = User.builder().id(2l).userName("영지안")
-                .role(UserRole.USER).build();
+                .role(UserRole.ROLE_USER).build();
 
         Post post = Post.builder()
                 .id(1l)
@@ -144,7 +144,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.delete(1l, "안지영", List.of(new SimpleGrantedAuthority(UserRole.USER.name())));
+            postService.delete(1l, "안지영", List.of(new SimpleGrantedAuthority(UserRole.ROLE_USER.name())));
         });
     }
 
@@ -152,7 +152,7 @@ public class PostServiceTest {
     @DisplayName("포스트 삭제 실패 테스트 - 포스트 존재하지 않을 때")
     void deleteFail2() {
         User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.USER).build();
+                .role(UserRole.ROLE_USER).build();
 
         Mockito.when(userRepository.findByUserName(any()))
                 .thenReturn(Optional.of(user));

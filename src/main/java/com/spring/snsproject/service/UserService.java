@@ -34,7 +34,7 @@ public class UserService {
         });
 
         // DB에 이름, 비밀번호(인코딩) 저장
-        User user = userRepository.save(userJoinRequest.toEntity(encoder.encode(userJoinRequest.getPassword()), UserRole.USER));
+        User user = userRepository.save(userJoinRequest.toEntity(encoder.encode(userJoinRequest.getPassword()), UserRole.ROLE_USER));
 
         return UserDto.builder()
                 .id(user.getId())
@@ -70,9 +70,9 @@ public class UserService {
         String role = roleChangeRequest.getRole();
 
         if(role.equals("admin")){
-            savedUser.changeRole(UserRole.ADMIN);
+            savedUser.changeRole(UserRole.ROLE_ADMIN);
         } else if (role.equals("user")) {
-            savedUser.changeRole(UserRole.USER);
+            savedUser.changeRole(UserRole.ROLE_USER);
         } else{
             throw new AppException(ErrorCode.INVALID_ROLE, "admin 혹은 user 중 하나를 입력해주세요.");
         }
