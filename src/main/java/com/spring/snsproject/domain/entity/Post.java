@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 @Slf4j
-public class Post {
+public class Post extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,8 +27,6 @@ public class Post {
 
     private String title;
     private String body;
-    private Timestamp createdAt;
-    private Timestamp lastModifiedAt;
 
     public static PostDto of(Post savedPost) {
         return PostDto.builder()
@@ -36,13 +34,10 @@ public class Post {
                 .userName(savedPost.getUser().getUserName())
                 .title(savedPost.getTitle())
                 .body(savedPost.getBody())
-                .createdAt(savedPost.getCreatedAt())
-                .lastModifiedAt(savedPost.getLastModifiedAt())
                 .build();
     }
     public void editPost(String title, String body){
         this.title = title;
         this.body = body;
-        this.lastModifiedAt = new Timestamp(System.currentTimeMillis());
     }
 }

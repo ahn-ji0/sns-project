@@ -18,7 +18,6 @@ public class UserJoinRequest {
                 .userName(this.userName)
                 .password(encodedPassword)
                 .role(role)
-                .registeredAt(new Timestamp(System.currentTimeMillis()))
                 .build();
     }
 }

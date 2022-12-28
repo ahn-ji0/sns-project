@@ -136,7 +136,7 @@ class UserControllerTest {
 
         given(userService.changeRole(any(), any())).willReturn(UserDto.builder()
                 .id(1l)
-                .role(UserRole.ADMIN)
+                .role(UserRole.ROLE_ADMIN)
                 .build());
 
         mockMvc.perform(post("/api/v1/users/1/role/change")
@@ -146,7 +146,7 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
                 .andExpect(jsonPath("$.result.id").exists())
-                .andExpect(jsonPath("$.result.userRole").value(UserRole.ADMIN.name()))
+                .andExpect(jsonPath("$.result.userRole").value(UserRole.ROLE_ADMIN.name()))
                 .andDo(print());
     }
 

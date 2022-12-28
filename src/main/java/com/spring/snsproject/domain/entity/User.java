@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,8 +24,6 @@ public class User {
     private String userName;
     private String password;
     private UserRole role;
-    private Timestamp registeredAt;
-    private Timestamp updatedAt;
     private Timestamp deletedAt;
 
     public static UserDto of(User user){
@@ -33,15 +31,14 @@ public class User {
                 .id(user.getId())
                 .userName(user.getUserName())
                 .role(user.getRole())
-                .registeredAt(user.getRegisteredAt())
-                .updatedAt(user.getUpdatedAt())
+                .createdAt(user.getCreatedAt())
+                .lastModifiedAt(user.getLastModifiedAt())
                 .deletedAt(user.getDeletedAt())
                 .build();
     }
 
     public User changeRole(UserRole userRole){
         this.role = userRole;
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
         return this;
     }
 }

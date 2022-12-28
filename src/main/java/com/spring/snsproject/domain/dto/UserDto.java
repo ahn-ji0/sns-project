@@ -15,7 +15,7 @@ public class UserDto {
     private Long id;
     private String userName;
     private UserRole role;
-    private Timestamp registeredAt;
-    private Timestamp updatedAt;
+    private Timestamp createdAt;
+    private Timestamp lastModifiedAt;
     private Timestamp deletedAt;
 }
