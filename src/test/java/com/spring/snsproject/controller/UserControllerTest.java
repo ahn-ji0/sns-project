@@ -2,6 +2,8 @@ package com.spring.snsproject.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.snsproject.domain.UserRole;
+import com.spring.snsproject.domain.dto.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.UserDto;
 import com.spring.snsproject.domain.dto.UserJoinRequest;
 import com.spring.snsproject.domain.dto.UserLoginRequest;
@@ -23,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -121,6 +124,63 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("role 변경 성공 테스트")
+    @WithMockUser
+    void changeRoleSuccess() throws Exception {
+
+        RoleChangeRequest request = new RoleChangeRequest("admin");
+
+        given(userService.changeRole(any(), any())).willReturn(UserDto.builder()
+                .id(1l)
+                .role(UserRole.ADMIN)
+                .build());
+
+        mockMvc.perform(post("/api/v1/users/1/role/change")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.id").exists())
+                .andExpect(jsonPath("$.result.userRole").value(UserRole.ADMIN.name()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("role 변경 실패 테스트 - 인증 실패")
+    @WithMockUser
+    void changeRoleFail() throws Exception {
+
+        RoleChangeRequest request = new RoleChangeRequest("admin");
+
+        given(userService.changeRole(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다."));
+
+        mockMvc.perform(post("/api/v1/users/1/role/change")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("role 변경 실패 테스트 - 적절하지 않은 role인 경우")
+    @WithMockUser
+    void changeRoleFail2() throws Exception {
+
+        RoleChangeRequest request = new RoleChangeRequest("super_admin");
+
+        given(userService.changeRole(any(), any())).willThrow(new AppException(ErrorCode.INVALID_ROLE, "admin, user 중 하나를 입력해주세요"));
+
+        mockMvc.perform(post("/api/v1/users/1/role/change")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 }
