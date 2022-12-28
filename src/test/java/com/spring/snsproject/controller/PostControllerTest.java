@@ -118,6 +118,23 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("포스트 작성 실패 테스트 - 인증 실패")
+    @WithMockUser
+    void writeFail() throws Exception {
+        long postId = 1l;
+        PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
+
+        given(postService.write(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다."));
+
+        mockMvc.perform(post("/api/v1/posts")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("포스트 수정 성공 테스트")
     @WithMockUser
     void editSuccess() throws Exception {
@@ -171,6 +188,23 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("포스트 수정 실패 테스트 - 인증 실패")
+    @WithMockUser
+    void editFail3() throws Exception {
+
+        PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
+
+        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
+
+        mockMvc.perform(put("/api/v1/posts/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("포스트 삭제 성공 테스트")
     @WithMockUser
     void deleteSuccess() throws Exception {
@@ -204,9 +238,20 @@ class PostControllerTest {
     @WithMockUser
     void deleteFail2() throws Exception {
 
-        PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
-
         given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "유저와 작성자가 일치하지 않습니다."));
+
+        mockMvc.perform(delete("/api/v1/posts/1")
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("포스트 수정 실패 테스트 - 인증 실패")
+    @WithMockUser
+    void deleteFail3() throws Exception {
+
+        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
