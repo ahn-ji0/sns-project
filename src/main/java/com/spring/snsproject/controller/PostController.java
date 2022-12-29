@@ -59,4 +59,12 @@ public class PostController {
         Long deletedId = postService.delete(postId, authentication.getName(), authentication.getAuthorities());
         return Response.success(new PostResponse("포스트 삭제 완료", deletedId));
     }
+
+    @PostMapping("/{postId}/comment")
+    @ApiOperation(value="댓글 작성 기능", notes ="댓글을 입력하세요.")
+    public Response writeComment(@PathVariable Long postId, @RequestBody CommentWriteRequest commentWriteRequest, Authentication authentication){
+        CommentDto commentDto = postService.writeComment(postId, commentWriteRequest, authentication.getName());
+        return Response.success(new CommentResponse("댓글 등록 완료",commentDto.getId()));
+    }
+
 }
