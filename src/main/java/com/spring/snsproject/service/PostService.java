@@ -31,12 +31,7 @@ public class PostService {
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
 
-        Post savedPost = null;
-        try {
-            savedPost = postRepository.save(postWriteRequest.toEntity(user));
-        } catch (Exception e) {
-            throw new AppException(ErrorCode.DATABASE_ERROR,"DB에러가 발생하여 포스트를 작성할 수 없습니다.");
-        }
+        Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
         return Post.of(savedPost);
     }
 
@@ -62,12 +57,8 @@ public class PostService {
 
         // 수정, 저장
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
-        Post editedPost = null;
-        try {
-            editedPost = postRepository.save(savedPost);
-        } catch (Exception e) {
-            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트를 수정할 수 없습니다."));
-        }
+
+        Post editedPost = postRepository.save(savedPost);
         return Post.of(editedPost);
     }
 
@@ -85,23 +76,15 @@ public class PostService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 삭제할 수 없습니다.",userName));
         }
         // 삭제
-        try{
-            postRepository.delete(savedPost);
-        }catch (Exception e){
-            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트를 삭제할 수 없습니다."));
-        }
+        postRepository.delete(savedPost);
+
         return savedPost.getId();
     }
 
     public Page<PostDto> getAll(Pageable pageable) {
-        Page<Post> posts = null;
-        try{
-            posts = postRepository.findAll(pageable);
-        } catch (Exception e){
-            throw new AppException(ErrorCode.DATABASE_ERROR, String.format("DB에러가 발생하여 포스트 리스트를 불러올 수 없습니다."));
-        }
-
+        Page<Post> posts = postRepository.findAll(pageable);
         Page<PostDto> postGetResponses = posts.map(post -> Post.of(post));
+
         return postGetResponses;
     }
 }
