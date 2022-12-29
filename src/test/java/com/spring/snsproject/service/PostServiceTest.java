@@ -9,6 +9,7 @@ import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
+import com.spring.snsproject.repository.CommentRepository;
 import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,12 +28,13 @@ import static org.mockito.ArgumentMatchers.any;
 public class PostServiceTest {
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
     private PostRepository postRepository = Mockito.mock(PostRepository.class);
+    private CommentRepository commentRepository = Mockito.mock(CommentRepository.class);
 
     private PostService postService;
 
     @BeforeEach
     void setUp() {
-        postService = new PostService(userRepository, postRepository);
+        postService = new PostService(userRepository, postRepository,commentRepository);
     }
 
     @Test

@@ -1,13 +1,13 @@
 package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.PostDto;
-import com.spring.snsproject.domain.dto.PostEditRequest;
-import com.spring.snsproject.domain.dto.PostWriteRequest;
+import com.spring.snsproject.domain.dto.*;
+import com.spring.snsproject.domain.entity.Comment;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
+import com.spring.snsproject.repository.CommentRepository;
 import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     public PostDto write(PostWriteRequest postWriteRequest, String userName){
         User user = userRepository.findByUserName(userName).orElseThrow(()
@@ -86,5 +87,21 @@ public class PostService {
         Page<PostDto> postGetResponses = posts.map(post -> Post.of(post));
 
         return postGetResponses;
+    }
+
+    public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
+        // 유저 존재 여부
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        // 포스트 존재 여부
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
+        Comment savedComment;
+        try {
+            savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.DATABASE_ERROR, "DB에러가 발생하여 댓글을 저장할 수 없습니다.");
+        }
+        return Comment.of(savedComment);
     }
 }
