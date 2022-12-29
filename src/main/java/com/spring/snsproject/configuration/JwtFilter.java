@@ -1,11 +1,9 @@
 package com.spring.snsproject.configuration;
 
 import com.spring.snsproject.domain.entity.User;
-import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.UserService;
 import com.spring.snsproject.utils.JwtUtils;
-import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             } catch (Exception e) {
-                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorName());
+                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorMessage());
             }
         }
 
@@ -56,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (Exception e){
-            request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorName());
+            request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorMessage());
         }
         filterChain.doFilter(request, response);
     }

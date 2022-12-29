@@ -26,6 +26,7 @@ public class ExceptionManager {
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<?> sqlExceptionHandler(SQLException e){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Response.error(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(), "DATABASE ERROR")));
+                .body(Response.error(new ErrorResponse(ErrorCode.DATABASE_ERROR.getHttpStatus().name(),
+                        ErrorCode.DATABASE_ERROR.getErrorMessage())));
     }
 }

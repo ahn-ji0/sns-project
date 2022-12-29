@@ -26,6 +26,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +161,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "DB에러가 발생하여 포스트를 작성할 수 없습니다."));
+        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -225,7 +226,7 @@ class PostControllerTest {
     @WithMockUser
     void deleteFail() throws Exception {
 
-        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "DB에러가 발생하여 포스트를 작성할 수 없습니다."));
+        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
