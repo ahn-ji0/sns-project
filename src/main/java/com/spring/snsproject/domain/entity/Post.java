@@ -34,6 +34,8 @@ public class Post extends BaseEntity{
                 .userName(savedPost.getUser().getUserName())
                 .title(savedPost.getTitle())
                 .body(savedPost.getBody())
+                .createdAt(savedPost.getCreatedAt())
+                .lastModifiedAt(savedPost.getLastModifiedAt())
                 .build();
     }
     public void editPost(String title, String body){
