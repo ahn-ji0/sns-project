@@ -4,6 +4,10 @@ import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.UserService;
 import com.spring.snsproject.utils.JwtUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -33,17 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         log.info("authorization:{}", authorizationHeader);
 
-        // 토큰이 없는 경우 제외
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            try {
+        try {
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
                 filterChain.doFilter(request, response);
                 return;
-            } catch (Exception e) {
-                request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorMessage());
             }
-        }
-
-        try {
             String token = authorizationHeader.split(" ")[1];
 
             String userName = JwtUtils.getUserName(token, secretKey);
@@ -53,8 +51,10 @@ public class JwtFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), null, List.of(new SimpleGrantedAuthority(user.getRole().name())));
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (Exception e){
-            request.setAttribute("exception", ErrorCode.INVALID_TOKEN.getErrorMessage());
+        } catch (MalformedJwtException e){
+            request.setAttribute("exception", ErrorCode.WRONG_TOKEN.name());
+        } catch (ExpiredJwtException e){
+            request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.name());
         }
         filterChain.doFilter(request, response);
     }

@@ -14,16 +14,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @Slf4j
 public class CustomAuthenticationEntryPoint implements org.springframework.security.web.AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String exception = (String) request.getAttribute("exception");
+        String e = (String) request.getAttribute("exception");
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ErrorCode errorCode = ErrorCode.INVALID_TOKEN;
+        ErrorCode errorCode = null;
+        if(e == null){
+            errorCode = ErrorCode.INVALID_TOKEN;
+        } else if(e.equals(ErrorCode.WRONG_TOKEN.name())){
+            errorCode = ErrorCode.WRONG_TOKEN;
+        } else if (e.equals(ErrorCode.EXPIRED_TOKEN.name())){
+            errorCode = ErrorCode.EXPIRED_TOKEN;
+        }
 
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType("application/json");
