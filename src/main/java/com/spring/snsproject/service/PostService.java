@@ -104,4 +104,17 @@ public class PostService {
         }
         return Comment.of(savedComment);
     }
+
+    public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
+        // 유저 존재 여부 확인
+
+        // 포스트 존재 여부 확인
+
+        // 댓글 존재 여부 확인
+
+        // 댓글 수정, 저장
+
+        // Dto 반환
+        return Comment.of(new Comment());
+    }
 }

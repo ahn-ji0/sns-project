@@ -67,4 +67,11 @@ public class PostController {
         return Response.success(new CommentResponse("댓글 등록 완료",commentDto.getId()));
     }
 
+    @PutMapping("/{postId}/comment/{commentId}")
+    @ApiOperation(value="댓글 수정 기능", notes ="댓글 수정 내용을 입력하세요.")
+    public Response editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentEditRequest commentEditRequest, Authentication authentication){
+        CommentDto commentDto = postService.editComment(postId, commentId, commentEditRequest, authentication.getName());
+        return Response.success(new CommentResponse("댓글 수정 완료",commentDto.getId()));
+    }
+
 }
