@@ -41,4 +41,8 @@ public class Comment extends BaseEntity{
                 .lastModifiedAt(comment.getLastModifiedAt())
                 .build();
     }
+
+    public void editComment(String comment) {
+        this.comment = comment;
+    }
 }

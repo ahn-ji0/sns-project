@@ -96,25 +96,44 @@ public class PostService {
         // 포스트 존재 여부
         Post savedPost = postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
-        Comment savedComment;
-        try {
-            savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
-        } catch (Exception e) {
-            throw new AppException(ErrorCode.DATABASE_ERROR, "DB에러가 발생하여 댓글을 저장할 수 없습니다.");
-        }
+
+        Comment savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
         return Comment.of(savedComment);
     }
 
-    public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
-        // 유저 존재 여부 확인
+    public CommentDto editComment(Long commentId, CommentEditRequest commentEditRequest, String userName) {
+        // 유저 존재 여부
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        // 댓글 존재 여부
+        Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
+                -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
 
-        // 포스트 존재 여부 확인
-
-        // 댓글 존재 여부 확인
-
+        // 유저 일치 여부(권한)
+        if(!user.getRole().equals(UserRole.ROLE_ADMIN) && !userName.equals(savedComment.getUser().getUserName())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 댓글을 수정할 수 없습니다.",userName));
+        }
         // 댓글 수정, 저장
+        savedComment.editComment(commentEditRequest.getComment());
 
-        // Dto 반환
-        return Comment.of(new Comment());
+        Comment editedComment = commentRepository.save(savedComment);
+        return Comment.of(editedComment);
+    }
+
+    public Long deleteComment(Long commentId, String userName) {
+        // 유저 존재 여부
+        User user = userRepository.findByUserName(userName).orElseThrow(()
+                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        // 댓글 존재 여부
+        Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
+                -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
+        // 유저 일치 여부(권한)
+        if(!user.getRole().equals(UserRole.ROLE_ADMIN) && !userName.equals(savedComment.getUser().getUserName())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 댓글을 수정할 수 없습니다.",userName));
+        }
+
+        //삭제
+        commentRepository.delete(savedComment);
+        return savedComment.getId();
     }
 }
