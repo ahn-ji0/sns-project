@@ -136,4 +136,11 @@ public class PostService {
         commentRepository.delete(savedComment);
         return savedComment.getId();
     }
+
+    public Page<CommentDto> getAllComments(Pageable pageable) {
+        Page<Comment> comments = commentRepository.findAll(pageable);
+        Page<CommentDto> commentDtos = comments.map(comment -> Comment.of(comment));
+
+        return commentDtos;
+    }
 }

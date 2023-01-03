@@ -80,4 +80,14 @@ public class PostController {
         Long deletedCommentId = postService.deleteComment(commentId, authentication.getName());
         return Response.success(new CommentResponse("댓글 삭제 완료", deletedCommentId));
     }
+
+    @GetMapping("/{postId}/comments")
+    @ApiOperation(value="포스트 조회 기능")
+    public Response getAllComments(@PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        Page<CommentDto> comments = postService.getAllComments(pageable);
+        return Response.success(comments.map(commentDto ->
+                new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(),
+                        commentDto.getPostId(), DateUtils.dateFormat(commentDto.getCreatedAt()))));
+    }
+
 }
