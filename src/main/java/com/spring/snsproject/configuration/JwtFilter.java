@@ -1,6 +1,7 @@
 package com.spring.snsproject.configuration;
 
 import com.spring.snsproject.domain.entity.User;
+import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.UserService;
 import com.spring.snsproject.utils.JwtUtils;
@@ -55,6 +56,8 @@ public class JwtFilter extends OncePerRequestFilter {
             request.setAttribute("exception", ErrorCode.WRONG_TOKEN.name());
         } catch (ExpiredJwtException e){
             request.setAttribute("exception", ErrorCode.EXPIRED_TOKEN.name());
+        } catch (AppException e){
+            request.setAttribute("exception", ErrorCode.USERNAME_NOT_FOUND.name());
         }
         filterChain.doFilter(request, response);
     }

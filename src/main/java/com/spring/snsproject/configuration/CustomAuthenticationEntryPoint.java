@@ -31,13 +31,15 @@ public class CustomAuthenticationEntryPoint implements org.springframework.secur
             errorCode = ErrorCode.WRONG_TOKEN;
         } else if (e.equals(ErrorCode.EXPIRED_TOKEN.name())){
             errorCode = ErrorCode.EXPIRED_TOKEN;
+        } else if (e.equals(ErrorCode.USERNAME_NOT_FOUND.name())){
+            errorCode = ErrorCode.USERNAME_NOT_FOUND;
         }
 
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
-        Response errorResponse = Response.error(new ErrorResponse(errorCode.getHttpStatus().name(), errorCode.toString()));
+        Response errorResponse = Response.error(new ErrorResponse(errorCode.toString(), errorCode.getErrorMessage()));
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
