@@ -3,6 +3,7 @@ package com.spring.snsproject.domain.entity;
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.UserDto;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,11 +16,8 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class User extends BaseEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String userName;
     private String password;

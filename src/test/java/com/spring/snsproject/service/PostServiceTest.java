@@ -86,7 +86,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.edit(1l, postEditRequests, "안지영", List.of(new SimpleGrantedAuthority(UserRole.ROLE_USER.name())));
+            postService.edit(1l, postEditRequests, "안지영");
         });
     }
 
@@ -105,7 +105,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.edit(1l, postEditRequests, user.getUserName(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
+            postService.edit(1l, postEditRequests, user.getUserName());
         });
     }
 
@@ -134,7 +134,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.of(post));
 
         assertThrows(AppException.class, () -> {
-            postService.edit(1l, postEditRequests, user.getUserName(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
+            postService.edit(1l, postEditRequests, user.getUserName());
         });
     }
 
@@ -146,7 +146,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.delete(1l, "안지영", List.of(new SimpleGrantedAuthority(UserRole.ROLE_USER.name())));
+            postService.delete(1l, "안지영");
         });
     }
 
@@ -163,7 +163,7 @@ public class PostServiceTest {
                 .thenReturn(Optional.ofNullable(null));
 
         assertThrows(AppException.class, () -> {
-            postService.delete(1l, user.getUserName(), List.of(new SimpleGrantedAuthority(user.getRole().name())));
+            postService.delete(1l, user.getUserName());
         });
     }
 }
