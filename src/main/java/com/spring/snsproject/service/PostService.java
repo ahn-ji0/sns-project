@@ -157,8 +157,6 @@ public class PostService {
     public int getLikes(Long postId) {
         Post savedPost = getPostById(postId);
 
-        int numLikes = likesRepository.countByPost(savedPost);
-
-        return numLikes;
+        return savedPost.getLikes().size();
     }
 }
