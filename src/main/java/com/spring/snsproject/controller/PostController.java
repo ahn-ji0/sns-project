@@ -98,4 +98,10 @@ public class PostController {
         return Response.success("좋아요를 눌렀습니다.");
     }
 
+    @GetMapping("/{postId}/likes")
+    @ApiOperation(value="좋아요 개수 조회 기능", notes ="좋아요 개수를 조회하려는 포스트의 id를 url에 입력하세요.")
+    public Response getLikes(@PathVariable Long postId) {
+        int numLikes = postService.getLikes(postId);
+        return Response.success(numLikes);
+    }
 }

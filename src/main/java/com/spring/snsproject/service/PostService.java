@@ -153,4 +153,12 @@ public class PostService {
                 .user(user)
                 .build());
     }
+
+    public int getLikes(Long postId) {
+        Post savedPost = getPostById(postId);
+
+        int numLikes = likesRepository.countByPost(savedPost);
+
+        return numLikes;
+    }
 }
