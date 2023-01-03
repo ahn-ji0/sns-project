@@ -28,58 +28,28 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    public User getUserByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
+    }
+    public Post getPostById(Long postId){
+        return postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
+    }
+    public Comment getCommentById(Long commentId){
+        return commentRepository.findById(commentId).orElseThrow(()
+                -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
+    }
+    public void checkAuthority(User user, String writer){
+        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !user.getUserName().equals(writer)){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",user.getUserName()));
+        }
+    }
     public PostDto write(PostWriteRequest postWriteRequest, String userName){
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        User user = getUserByUserName(userName);
 
         Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
         return Post.of(savedPost);
-    }
-
-    public PostDto getOne(Long postId) {
-        Post savedPost = postRepository.findById(postId).orElseThrow(()
-                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%s번 포스트는 존재하지 않습니다.",postId)));
-        return Post.of(savedPost);
-    }
-
-    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
-        //유저 존재 여부
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
-
-        // 포스트 존재 여부
-        Post savedPost = postRepository.findById(postId).orElseThrow(()
-                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
-
-        // 유저 일치 여부(권한)
-        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",userName));
-        }
-
-        // 수정, 저장
-        savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
-
-        Post editedPost = postRepository.save(savedPost);
-        return Post.of(editedPost);
-    }
-
-    public Long delete(Long postId, String userName) {
-        //유저 존재 여부
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
-
-        // 포스트 존재 여부
-        Post savedPost = postRepository.findById(postId).orElseThrow(()
-                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
-
-        // 유저 일치 여부(권한)
-        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 삭제할 수 없습니다.",userName));
-        }
-        // 삭제
-        postRepository.delete(savedPost);
-
-        return savedPost.getId();
     }
 
     public Page<PostDto> getAll(Pageable pageable) {
@@ -89,31 +59,54 @@ public class PostService {
         return postGetResponses;
     }
 
+    public PostDto getOne(Long postId) {
+        Post savedPost = getPostById(postId);
+        return Post.of(savedPost);
+    }
+
+    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
+        User user = getUserByUserName(userName);
+
+        Post savedPost = getPostById(postId);
+
+        checkAuthority(user,savedPost.getUser().getUserName());
+
+        //수정
+        savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
+
+        Post editedPost = postRepository.save(savedPost);
+        return Post.of(editedPost);
+    }
+
+    public Long delete(Long postId, String userName) {
+        User user = getUserByUserName(userName);
+
+        Post savedPost = getPostById(postId);
+
+        checkAuthority(user, savedPost.getUser().getUserName());
+
+        //삭제
+        postRepository.delete(savedPost);
+        return savedPost.getId();
+    }
+
     public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
-        // 유저 존재 여부
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
-        // 포스트 존재 여부
-        Post savedPost = postRepository.findById(postId).orElseThrow(()
-                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
+        User user = getUserByUserName(userName);
+
+        Post savedPost = getPostById(postId);
 
         Comment savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
         return Comment.of(savedComment);
     }
 
     public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
-        // 유저 존재 여부
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
-        // 댓글 존재 여부
-        Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
-                -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
+        User user = getUserByUserName(userName);
 
-        // 유저 일치 여부(권한)
-        if(!user.getRole().equals(UserRole.ROLE_ADMIN) && !userName.equals(savedComment.getUser().getUserName())){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 댓글을 수정할 수 없습니다.",userName));
-        }
-        // 댓글 수정, 저장
+        Comment savedComment = getCommentById(commentId);
+
+        checkAuthority(user, savedComment.getUser().getUserName());
+
+        //수정
         savedComment.editComment(commentEditRequest.getComment());
 
         Comment editedComment = commentRepository.save(savedComment);
@@ -121,17 +114,11 @@ public class PostService {
     }
 
     public Long deleteComment(Long postId, Long commentId, String userName) {
-        // 유저 존재 여부
-        User user = userRepository.findByUserName(userName).orElseThrow(()
-                -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
-        // 댓글 존재 여부
-        Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
-                -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
+        User user = getUserByUserName(userName);
 
-        // 유저 일치 여부(권한)
-        if(!user.getRole().equals(UserRole.ROLE_ADMIN) && !userName.equals(savedComment.getUser().getUserName())){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 댓글을 수정할 수 없습니다.",userName));
-        }
+        Comment savedComment = getCommentById(commentId);
+
+        checkAuthority(user, savedComment.getUser().getUserName());
 
         //삭제
         commentRepository.delete(savedComment);
