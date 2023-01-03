@@ -13,4 +13,5 @@ public class CommentGetResponse {
     private String userName;
     private Long postId;
     private String createdAt;
+    private String lastModifiedAt;
 }

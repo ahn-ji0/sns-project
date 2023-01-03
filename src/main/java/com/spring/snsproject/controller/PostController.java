@@ -65,23 +65,25 @@ public class PostController {
     @ApiOperation(value="댓글 작성 기능", notes ="댓글을 입력하세요.")
     public Response writeComment(@PathVariable Long postId, @RequestBody CommentWriteRequest commentWriteRequest, Authentication authentication){
         CommentDto commentDto = postService.writeComment(postId, commentWriteRequest, authentication.getName());
-        return Response.success(new CommentResponse("댓글 등록 완료",commentDto.getId()));
+        return Response.success(new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(), commentDto.getPostId(),
+                DateUtils.dateFormat(commentDto.getCreatedAt()), DateUtils.dateFormat(commentDto.getLastModifiedAt())));
     }
 
     @GetMapping("/{postId}/comments")
-    @ApiOperation(value="포스트 조회 기능")
+    @ApiOperation(value="댓글 조회 기능")
     public Response getComments(@PathVariable Long postId, @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         Page<CommentDto> comments = postService.getComments(postId, pageable);
         return Response.success(comments.map(commentDto ->
-                new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(),
-                        commentDto.getPostId(), DateUtils.dateFormat(commentDto.getCreatedAt()))));
+                new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(), commentDto.getPostId(),
+                        DateUtils.dateFormat(commentDto.getCreatedAt()), DateUtils.dateFormat(commentDto.getLastModifiedAt()))));
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
     @ApiOperation(value="댓글 수정 기능", notes ="포스트의 id와 수정하려는 댓글의 id를 url에 입력하고, 수정 내용을 입력하세요.")
     public Response editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentEditRequest commentEditRequest, Authentication authentication){
         CommentDto commentDto = postService.editComment(postId, commentId, commentEditRequest, authentication.getName());
-        return Response.success(new CommentResponse("댓글 수정 완료",commentDto.getId()));
+        return Response.success(new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(), commentDto.getPostId(),
+                DateUtils.dateFormat(commentDto.getCreatedAt()), DateUtils.dateFormat(commentDto.getLastModifiedAt())));
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
