@@ -13,11 +13,12 @@ import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -99,6 +100,14 @@ public class PostService {
         return Comment.of(savedComment);
     }
 
+    public Page<CommentDto> getComments(Long postId, Pageable pageable) {
+        Post savedPost = getPostById(postId);
+
+        Page<Comment> comments = commentRepository.findByPost(savedPost, pageable);
+        Page<CommentDto> commentDtos = comments.map(comment -> Comment.of(comment));
+        return commentDtos;
+    }
+
     public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
@@ -123,12 +132,5 @@ public class PostService {
         //삭제
         commentRepository.delete(savedComment);
         return savedComment.getId();
-    }
-
-    public Page<CommentDto> getAllComments(Pageable pageable) {
-        Page<Comment> comments = commentRepository.findAll(pageable);
-        Page<CommentDto> commentDtos = comments.map(comment -> Comment.of(comment));
-
-        return commentDtos;
     }
 }
