@@ -144,7 +144,7 @@ public class PostService {
         Post savedPost = getPostById(postId);
 
         // 중복 확인
-        likesRepository.findByUser(user).ifPresent(like -> {
+        likesRepository.findByUserAndPost(user, savedPost).ifPresent(like -> {
             throw new AppException(ErrorCode.DUPLICATE_LIKES, String.format("%s님은 이미 %d번 포스트에 좋아요를 눌렀습니다.",userName, postId));
         });
 
