@@ -142,7 +142,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any(), any())).willReturn(postDto1);
+        given(postService.edit(any(), any(), any())).willReturn(postDto1);
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -161,7 +161,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
+        given(postService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -178,7 +178,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "유저와 작성자가 일치하지 않습니다."));
+        given(postService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "유저와 작성자가 일치하지 않습니다."));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -195,7 +195,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
+        given(postService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -210,7 +210,7 @@ class PostControllerTest {
     @WithMockUser
     void deleteSuccess() throws Exception {
 
-        given(postService.delete(any(), any(), any())).willReturn(postDto1.getId());
+        given(postService.delete(any(), any())).willReturn(postDto1.getId());
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
@@ -226,7 +226,7 @@ class PostControllerTest {
     @WithMockUser
     void deleteFail() throws Exception {
 
-        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
+        given(postService.delete(any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, " "));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
@@ -235,11 +235,11 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("포스트 수정 실패 테스트 - 작성자 불일치")
+    @DisplayName("포스트 삭제 실패 테스트 - 작성자 불일치")
     @WithMockUser
     void deleteFail2() throws Exception {
 
-        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "유저와 작성자가 일치하지 않습니다."));
+        given(postService.delete(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "유저와 작성자가 일치하지 않습니다."));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
@@ -248,11 +248,11 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("포스트 수정 실패 테스트 - 인증 실패")
+    @DisplayName("포스트 삭제 실패 테스트 - 인증 실패")
     @WithMockUser
     void deleteFail3() throws Exception {
 
-        given(postService.delete(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
+        given(postService.delete(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "인증에 실패했습니다."));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))

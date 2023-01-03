@@ -49,14 +49,14 @@ public class PostController {
     @PutMapping("/{postId}")
     @ApiOperation(value="포스트 수정 기능", notes ="수정하려는 포스트의 id를 url에 입력하고, 수정 내용을 입력하세요.")
     public Response edit(@PathVariable Long postId, @RequestBody PostEditRequest postEditRequest, Authentication authentication){
-        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName(), authentication.getAuthorities());
+        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName());
         return Response.success(new PostResponse("포스트 수정 완료",postDto.getId()));
     }
 
     @DeleteMapping("/{postId}")
     @ApiOperation(value="포스트 삭제 기능", notes ="삭제하려는 포스트의 id를 url에 입력하세요")
     public Response delete(@PathVariable Long postId, Authentication authentication){
-        Long deletedId = postService.delete(postId, authentication.getName(), authentication.getAuthorities());
+        Long deletedId = postService.delete(postId, authentication.getName());
         return Response.success(new PostResponse("포스트 삭제 완료", deletedId));
     }
 

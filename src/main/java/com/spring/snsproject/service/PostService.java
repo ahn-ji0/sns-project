@@ -42,7 +42,7 @@ public class PostService {
         return Post.of(savedPost);
     }
 
-    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName, Collection<? extends GrantedAuthority> authorities) {
+    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
         //유저 존재 여부
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
@@ -52,7 +52,7 @@ public class PostService {
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
 
         // 유저 일치 여부(권한)
-        if(!authorities.stream().findFirst().get().getAuthority().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
+        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",userName));
         }
 
@@ -63,7 +63,7 @@ public class PostService {
         return Post.of(editedPost);
     }
 
-    public Long delete(Long postId, String userName, Collection<? extends GrantedAuthority> authorities) {
+    public Long delete(Long postId, String userName) {
         //유저 존재 여부
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
@@ -73,7 +73,7 @@ public class PostService {
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
 
         // 유저 일치 여부(권한)
-        if(!authorities.stream().findFirst().get().getAuthority().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
+        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !userName.equals(savedPost.getUser().getUserName())){
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 삭제할 수 없습니다.",userName));
         }
         // 삭제
