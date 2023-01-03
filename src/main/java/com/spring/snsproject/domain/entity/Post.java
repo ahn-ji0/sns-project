@@ -28,6 +28,9 @@ public class Post extends BaseEntity{
     @OneToMany(mappedBy = "post", orphanRemoval = true)
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<Likes> likes;
+
     public static PostDto of(Post savedPost) {
         return PostDto.builder()
                 .id(savedPost.getId())

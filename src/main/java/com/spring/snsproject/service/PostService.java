@@ -8,11 +8,13 @@ import com.spring.snsproject.domain.dto.post.PostDto;
 import com.spring.snsproject.domain.dto.post.PostEditRequest;
 import com.spring.snsproject.domain.dto.post.PostWriteRequest;
 import com.spring.snsproject.domain.entity.Comment;
+import com.spring.snsproject.domain.entity.Likes;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.repository.CommentRepository;
+import com.spring.snsproject.repository.LikesRepository;
 import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final LikesRepository likesRepository;
 
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
@@ -133,5 +136,27 @@ public class PostService {
         //삭제
         commentRepository.delete(savedComment);
         return savedComment.getId();
+    }
+
+    public void pressLikes(Long postId, String userName) {
+        User user = getUserByUserName(userName);
+
+        Post savedPost = getPostById(postId);
+
+        // 중복 확인
+        likesRepository.findByUserAndPost(user, savedPost).ifPresent(like -> {
+            throw new AppException(ErrorCode.DUPLICATE_LIKES, String.format("%s님은 이미 %d번 포스트에 좋아요를 눌렀습니다.",userName, postId));
+        });
+
+        likesRepository.save(Likes.builder()
+                .post(savedPost)
+                .user(user)
+                .build());
+    }
+
+    public int getLikes(Long postId) {
+        Post savedPost = getPostById(postId);
+
+        return savedPost.getLikes().size();
     }
 }
