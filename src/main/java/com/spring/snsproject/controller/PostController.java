@@ -1,6 +1,7 @@
 package com.spring.snsproject.controller;
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.dto.*;
+import com.spring.snsproject.domain.dto.comment.*;
+import com.spring.snsproject.domain.dto.post.*;
 import com.spring.snsproject.service.PostService;
 import com.spring.snsproject.utils.DateUtils;
 import io.swagger.annotations.ApiOperation;

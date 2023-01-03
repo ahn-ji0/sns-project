@@ -1,7 +1,12 @@
 package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.*;
+import com.spring.snsproject.domain.dto.comment.CommentDto;
+import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
+import com.spring.snsproject.domain.dto.comment.CommentWriteRequest;
+import com.spring.snsproject.domain.dto.post.PostDto;
+import com.spring.snsproject.domain.dto.post.PostEditRequest;
+import com.spring.snsproject.domain.dto.post.PostWriteRequest;
 import com.spring.snsproject.domain.entity.Comment;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
@@ -13,12 +18,8 @@ import com.spring.snsproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

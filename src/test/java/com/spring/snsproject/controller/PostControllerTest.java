@@ -1,32 +1,23 @@
 package com.spring.snsproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.PostDto;
-import com.spring.snsproject.domain.dto.PostEditRequest;
-import com.spring.snsproject.domain.dto.PostWriteRequest;
+import com.spring.snsproject.domain.dto.post.PostDto;
+import com.spring.snsproject.domain.dto.post.PostEditRequest;
+import com.spring.snsproject.domain.dto.post.PostWriteRequest;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.PostService;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;

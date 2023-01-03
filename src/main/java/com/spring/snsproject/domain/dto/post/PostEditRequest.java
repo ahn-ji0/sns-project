@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.post;
 
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;

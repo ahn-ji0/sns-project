@@ -1,15 +1,13 @@
 package com.spring.snsproject.domain.entity;
 
-import com.spring.snsproject.domain.dto.PostDto;
+import com.spring.snsproject.domain.dto.post.PostDto;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Entity

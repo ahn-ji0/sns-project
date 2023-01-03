@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.post;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Builder
-public class CommentDto {
+@NoArgsConstructor
+public class PostDto {
     private Long id;
-    private Long postId;
     private String userName;
-    private String comment;
+    private String title;
+    private String body;
     private Timestamp createdAt;
     private Timestamp lastModifiedAt;
 }

@@ -2,9 +2,9 @@ package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.RoleChangeRequest;
-import com.spring.snsproject.domain.dto.UserDto;
-import com.spring.snsproject.domain.dto.UserJoinRequest;
-import com.spring.snsproject.domain.dto.UserLoginRequest;
+import com.spring.snsproject.domain.dto.user.UserDto;
+import com.spring.snsproject.domain.dto.user.UserJoinRequest;
+import com.spring.snsproject.domain.dto.user.UserLoginRequest;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;

@@ -1,9 +1,7 @@
 package com.spring.snsproject.domain.entity;
 
-import com.spring.snsproject.domain.dto.CommentDto;
-import com.spring.snsproject.domain.dto.PostDto;
+import com.spring.snsproject.domain.dto.comment.CommentDto;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

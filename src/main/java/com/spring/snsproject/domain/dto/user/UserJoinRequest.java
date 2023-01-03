@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.user;
 
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.entity.User;

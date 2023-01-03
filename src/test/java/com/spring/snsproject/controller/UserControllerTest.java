@@ -1,13 +1,11 @@
 package com.spring.snsproject.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.RoleChangeRequest;
-import com.spring.snsproject.domain.dto.UserDto;
-import com.spring.snsproject.domain.dto.UserJoinRequest;
-import com.spring.snsproject.domain.dto.UserLoginRequest;
-import com.spring.snsproject.domain.entity.User;
+import com.spring.snsproject.domain.dto.user.UserDto;
+import com.spring.snsproject.domain.dto.user.UserJoinRequest;
+import com.spring.snsproject.domain.dto.user.UserLoginRequest;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.UserService;
@@ -22,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

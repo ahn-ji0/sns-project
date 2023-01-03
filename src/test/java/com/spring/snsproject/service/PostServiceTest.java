@@ -2,13 +2,12 @@ package com.spring.snsproject.service;
 
 
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.PostDto;
-import com.spring.snsproject.domain.dto.PostEditRequest;
-import com.spring.snsproject.domain.dto.PostWriteRequest;
+import com.spring.snsproject.domain.dto.post.PostDto;
+import com.spring.snsproject.domain.dto.post.PostEditRequest;
+import com.spring.snsproject.domain.dto.post.PostWriteRequest;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
-import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.repository.CommentRepository;
 import com.spring.snsproject.repository.PostRepository;
 import com.spring.snsproject.repository.UserRepository;
@@ -16,9 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

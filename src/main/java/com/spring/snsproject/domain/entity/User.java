@@ -1,16 +1,12 @@
 package com.spring.snsproject.domain.entity;
 
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.UserDto;
+import com.spring.snsproject.domain.dto.user.UserDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

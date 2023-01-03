@@ -1,13 +1,15 @@
 package com.spring.snsproject.controller;
 
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.*;
+import com.spring.snsproject.domain.dto.user.UserDto;
+import com.spring.snsproject.domain.dto.user.UserJoinRequest;
+import com.spring.snsproject.domain.dto.user.UserJoinResponse;
+import com.spring.snsproject.domain.dto.user.UserLoginRequest;
 import com.spring.snsproject.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
