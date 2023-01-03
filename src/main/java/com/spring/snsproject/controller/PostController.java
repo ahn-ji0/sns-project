@@ -33,8 +33,8 @@ public class PostController {
     @GetMapping()
     @ApiOperation(value="포스트 조회 기능")
     public Response getAll(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<PostDto> postGetResponse = postService.getAll(pageable);
-        return Response.success(postGetResponse.map(postDto ->
+        Page<PostDto> postDtos = postService.getAll(pageable);
+        return Response.success(postDtos.map(postDto ->
                 new PostGetResponse(postDto.getId(), postDto.getTitle(), postDto.getBody(), postDto.getUserName(),
                         DateUtils.dateFormat(postDto.getCreatedAt()), DateUtils.dateFormat(postDto.getLastModifiedAt()))));
     }
@@ -59,6 +59,14 @@ public class PostController {
     public Response delete(@PathVariable Long postId, Authentication authentication){
         Long deletedId = postService.delete(postId, authentication.getName());
         return Response.success(new PostResponse("포스트 삭제 완료", deletedId));
+    }
+
+    @GetMapping("/my")
+    @ApiOperation(value="마이 피드 기능", notes ="나의 피드를 확인하세요")
+    public Response myFeed(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
+        Page<PostDto> postDtos = postService.myFeed(pageable, authentication.getName());
+        return Response.success(postDtos.map(postDto -> new PostGetResponse(postDto.getId(), postDto.getTitle(), postDto.getBody(), postDto.getUserName(),
+                DateUtils.dateFormat(postDto.getCreatedAt()), DateUtils.dateFormat(postDto.getLastModifiedAt()))));
     }
 
     @PostMapping("/{postId}/comments")

@@ -95,6 +95,14 @@ public class PostService {
         return savedPost.getId();
     }
 
+    public Page<PostDto> myFeed(Pageable pageable, String userName) {
+        User user = getUserByUserName(userName);
+
+        Page<Post> posts = postRepository.findByUser(user, pageable);
+        Page<PostDto> postDtos = posts.map(post -> Post.of(post));
+        return postDtos;
+    }
+
     public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
         User user = getUserByUserName(userName);
 
