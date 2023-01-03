@@ -101,10 +101,13 @@ public class PostService {
         return Comment.of(savedComment);
     }
 
-    public CommentDto editComment(Long commentId, CommentEditRequest commentEditRequest, String userName) {
+    public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         // 유저 존재 여부
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        // 포스트 존재 여부
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
         // 댓글 존재 여부
         Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
                 -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
@@ -120,10 +123,13 @@ public class PostService {
         return Comment.of(editedComment);
     }
 
-    public Long deleteComment(Long commentId, String userName) {
+    public Long deleteComment(Long postId, Long commentId, String userName) {
         // 유저 존재 여부
         User user = userRepository.findByUserName(userName).orElseThrow(()
                 -> new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userName)));
+        // 포스트 존재 여부
+        Post savedPost = postRepository.findById(postId).orElseThrow(()
+                -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
         // 댓글 존재 여부
         Comment savedComment = commentRepository.findById(commentId).orElseThrow(()
                 -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));

@@ -67,17 +67,17 @@ public class PostController {
         return Response.success(new CommentResponse("댓글 등록 완료",commentDto.getId()));
     }
 
-    @PutMapping("/comments/{commentId}")
-    @ApiOperation(value="댓글 수정 기능", notes ="수정하려는 댓글의 id를 url에 입력하고, 수정 내용을 입력하세요.")
-    public Response editComment(@PathVariable Long commentId, @RequestBody CommentEditRequest commentEditRequest, Authentication authentication){
-        CommentDto commentDto = postService.editComment(commentId, commentEditRequest, authentication.getName());
+    @PutMapping("/{postId}/comments/{commentId}")
+    @ApiOperation(value="댓글 수정 기능", notes ="포스트의 id와 수정하려는 댓글의 id를 url에 입력하고, 수정 내용을 입력하세요.")
+    public Response editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentEditRequest commentEditRequest, Authentication authentication){
+        CommentDto commentDto = postService.editComment(postId, commentId, commentEditRequest, authentication.getName());
         return Response.success(new CommentResponse("댓글 수정 완료",commentDto.getId()));
     }
 
-    @DeleteMapping("/comments/{commentId}")
-    @ApiOperation(value="댓글 삭제 기능", notes ="삭제하려는 댓글의 id를 url에 입력하세요.")
-    public Response deleteComment(@PathVariable Long commentId, Authentication authentication){
-        Long deletedCommentId = postService.deleteComment(commentId, authentication.getName());
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    @ApiOperation(value="댓글 삭제 기능", notes ="포스트의 id와 삭제하려는 댓글의 id를 url에 입력하세요.")
+    public Response deleteComment(@PathVariable Long postId, @PathVariable Long commentId, Authentication authentication){
+        Long deletedCommentId = postService.deleteComment(postId, commentId, authentication.getName());
         return Response.success(new CommentResponse("댓글 삭제 완료", deletedCommentId));
     }
 
