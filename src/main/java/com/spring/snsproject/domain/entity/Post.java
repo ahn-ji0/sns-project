@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,6 +28,9 @@ public class Post extends BaseEntity{
 
     private String title;
     private String body;
+
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<Comment> comments;
 
     public static PostDto of(Post savedPost) {
         return PostDto.builder()

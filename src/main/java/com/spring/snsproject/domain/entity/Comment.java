@@ -35,10 +35,14 @@ public class Comment extends BaseEntity{
         return CommentDto.builder()
                 .id(comment.getId())
                 .postId(comment.getPost().getId())
-                .userId(comment.getUser().getId())
-                .content(comment.getComment())
+                .userName(comment.getUser().getUserName())
+                .comment(comment.getComment())
                 .createdAt(comment.getCreatedAt())
                 .lastModifiedAt(comment.getLastModifiedAt())
                 .build();
+    }
+
+    public void editComment(String comment) {
+        this.comment = comment;
     }
 }

@@ -14,8 +14,8 @@ import java.sql.Timestamp;
 public class CommentDto {
     private Long id;
     private Long postId;
-    private Long userId;
-    private String content;
+    private String userName;
+    private String comment;
     private Timestamp createdAt;
     private Timestamp lastModifiedAt;
 }
