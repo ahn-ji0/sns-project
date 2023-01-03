@@ -90,4 +90,12 @@ public class PostController {
         Long deletedCommentId = postService.deleteComment(postId, commentId, authentication.getName());
         return Response.success(new CommentResponse("댓글 삭제 완료", deletedCommentId));
     }
+
+    @PostMapping("/{postId}/likes")
+    @ApiOperation(value="좋아요 누르기 기능", notes ="좋아요를 누르려는 포스트의 id를 url에 입력하세요.")
+    public Response pressLikes(@PathVariable Long postId, Authentication authentication) {
+        postService.pressLikes(postId, authentication.getName());
+        return Response.success("좋아요를 눌렀습니다.");
+    }
+
 }

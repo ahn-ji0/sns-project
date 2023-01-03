@@ -17,7 +17,8 @@ public enum ErrorCode {
     WRONG_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 구조의 토큰입니다." ),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다." ),
     INVALID_ROLE(HttpStatus.BAD_REQUEST, "존재하지 않는 Role입니다." ),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다.");
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다."),
+    DUPLICATE_LIKES(HttpStatus.CONFLICT, "좋아요가 중복됩니다.");
 
     private HttpStatus httpStatus;
     private String errorMessage;
