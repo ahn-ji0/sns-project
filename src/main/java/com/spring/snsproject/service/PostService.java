@@ -1,5 +1,6 @@
 package com.spring.snsproject.service;
 
+import com.spring.snsproject.domain.AlarmType;
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.comment.CommentDto;
 import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
@@ -7,21 +8,18 @@ import com.spring.snsproject.domain.dto.comment.CommentWriteRequest;
 import com.spring.snsproject.domain.dto.post.PostDto;
 import com.spring.snsproject.domain.dto.post.PostEditRequest;
 import com.spring.snsproject.domain.dto.post.PostWriteRequest;
-import com.spring.snsproject.domain.entity.Comment;
-import com.spring.snsproject.domain.entity.Likes;
-import com.spring.snsproject.domain.entity.Post;
-import com.spring.snsproject.domain.entity.User;
+import com.spring.snsproject.domain.entity.*;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
-import com.spring.snsproject.repository.CommentRepository;
-import com.spring.snsproject.repository.LikesRepository;
-import com.spring.snsproject.repository.PostRepository;
-import com.spring.snsproject.repository.UserRepository;
+import com.spring.snsproject.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +30,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
+    private final AlarmRepository alarmRepository;
 
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
@@ -166,5 +165,20 @@ public class PostService {
         Post savedPost = getPostById(postId);
 
         return savedPost.getLikes().size();
+    }
+
+    public void alarm(Comment comment) {
+        Post post = comment.getPost();
+        User postWriter = post.getUser();
+
+        Alarm alarm = Alarm.builder()
+                .user(postWriter)
+                .alarmType(AlarmType.NEW_COMMENT_ON_POST.name())
+                .fromUserId(comment.getUser().getId())
+                .targetId(post.getId())
+                .text(AlarmType.NEW_COMMENT_ON_POST.getMessage())
+                .build();
+
+        alarmRepository.save(alarm);
     }
 }

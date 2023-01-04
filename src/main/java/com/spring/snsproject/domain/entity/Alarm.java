@@ -7,7 +7,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -17,14 +16,15 @@ import javax.persistence.ManyToOne;
 @NoArgsConstructor
 @SuperBuilder
 @Slf4j
-@EntityListeners(AlarmListener.class)
-public class Likes extends BaseEntity{
+public class Alarm extends BaseEntity{
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private String alarmType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private Long fromUserId;
+    private Long targetId;
+    private String text;
 }

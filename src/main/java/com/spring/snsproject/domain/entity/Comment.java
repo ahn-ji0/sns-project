@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @SuperBuilder
 @Slf4j
+@EntityListeners(AlarmListener.class)
 public class Comment extends BaseEntity{
 
     @ManyToOne
