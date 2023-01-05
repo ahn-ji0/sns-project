@@ -15,7 +15,7 @@ public class AlarmListener {
     private PostService postService;
 
     @PostPersist
-    public void postPersistComment(Comment comment){
-        postService.alarm(comment);
+    public void postPersistComment(Object object){
+        postService.alarm(object);
     }
 }

@@ -18,9 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -167,16 +164,31 @@ public class PostService {
         return savedPost.getLikes().size();
     }
 
-    public void alarm(Comment comment) {
-        Post post = comment.getPost();
+    public void alarm(Object object) {
+        Post post = null;
+        User user = null;
+        AlarmType alarmType = null;
+
+        if(object instanceof Comment){
+            Comment comment = (Comment) object;
+            post = comment.getPost();
+            user = comment.getUser();
+            alarmType = AlarmType.NEW_COMMENT_ON_POST;
+        } else if (object instanceof Likes) {
+            Likes likes = (Likes) object;
+            post = likes.getPost();
+            user = likes.getUser();
+            alarmType = AlarmType.NEW_LIKE_ON_POST;
+        }
+
         User postWriter = post.getUser();
 
         Alarm alarm = Alarm.builder()
                 .user(postWriter)
-                .alarmType(AlarmType.NEW_COMMENT_ON_POST.name())
-                .fromUserId(comment.getUser().getId())
+                .alarmType(alarmType.name())
+                .fromUserId(user.getId())
                 .targetId(post.getId())
-                .text(AlarmType.NEW_COMMENT_ON_POST.getMessage())
+                .text(alarmType.getMessage())
                 .build();
 
         alarmRepository.save(alarm);

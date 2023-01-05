@@ -1,5 +1,7 @@
 package com.spring.snsproject.utils;
 
+import com.spring.snsproject.domain.entity.Comment;
+import com.spring.snsproject.domain.entity.Post;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
