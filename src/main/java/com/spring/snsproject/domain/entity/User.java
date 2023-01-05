@@ -18,7 +18,6 @@ public class User extends BaseEntity{
     private String userName;
     private String password;
     private UserRole role;
-    private Timestamp deletedAt;
 
     public static UserDto of(User user){
         return UserDto.builder()

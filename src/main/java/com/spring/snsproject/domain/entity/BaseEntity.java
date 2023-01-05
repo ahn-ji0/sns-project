@@ -28,4 +28,6 @@ public class BaseEntity {
 
     @LastModifiedDate
     private Timestamp lastModifiedAt;
+
+    public Timestamp deletedAt;
 }
