@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.token;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.spring.snsproject.exception;
 
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.dto.ErrorResponse;
+import com.spring.snsproject.domain.dto.error.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

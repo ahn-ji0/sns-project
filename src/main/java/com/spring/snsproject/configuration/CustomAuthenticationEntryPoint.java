@@ -2,11 +2,9 @@ package com.spring.snsproject.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.dto.ErrorResponse;
-import com.spring.snsproject.exception.AppException;
+import com.spring.snsproject.domain.dto.error.ErrorResponse;
 import com.spring.snsproject.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 @Slf4j

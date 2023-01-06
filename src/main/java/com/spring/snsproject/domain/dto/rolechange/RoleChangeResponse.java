@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.rolechange;
 
 import com.spring.snsproject.domain.UserRole;
 import lombok.AllArgsConstructor;

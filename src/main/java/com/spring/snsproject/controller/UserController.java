@@ -1,7 +1,9 @@
 package com.spring.snsproject.controller;
 
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.dto.*;
+import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
+import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
+import com.spring.snsproject.domain.dto.token.TokenResponse;
 import com.spring.snsproject.domain.dto.user.UserDto;
 import com.spring.snsproject.domain.dto.user.UserJoinRequest;
 import com.spring.snsproject.domain.dto.user.UserJoinResponse;
