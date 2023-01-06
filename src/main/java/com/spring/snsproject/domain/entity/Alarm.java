@@ -1,5 +1,6 @@
 package com.spring.snsproject.domain.entity;
 
+import com.spring.snsproject.domain.AlarmType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import javax.persistence.ManyToOne;
 @Slf4j
 public class Alarm extends BaseEntity{
 
-    private String alarmType;
+    private AlarmType alarmType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

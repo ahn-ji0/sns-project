@@ -1,5 +1,6 @@
 package com.spring.snsproject.domain;
 
+import com.spring.snsproject.service.AlarmService;
 import com.spring.snsproject.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,10 @@ public class AlarmListener {
 
     @Lazy
     @Autowired
-    private PostService postService;
+    private AlarmService alarmService;
 
     @PostPersist
     public void postPersistComment(Object object){
-        postService.alarm(object);
+        alarmService.alarm(object);
     }
 }

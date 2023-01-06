@@ -163,32 +163,4 @@ public class PostService {
 
         return savedPost.getLikes().size();
     }
-
-    public void alarm(Object object) {
-        Post post = null;
-        User fromUser = null;
-        AlarmType alarmType = null;
-
-        if(object instanceof Comment){
-            Comment comment = (Comment) object;
-            post = comment.getPost();
-            fromUser = comment.getUser();
-            alarmType = AlarmType.NEW_COMMENT_ON_POST;
-        } else if(object instanceof Likes) {
-            Likes likes = (Likes) object;
-            post = likes.getPost();
-            fromUser = likes.getUser();
-            alarmType = AlarmType.NEW_LIKE_ON_POST;
-        }
-
-        Alarm alarm = Alarm.builder()
-                .user(post.getUser())
-                .alarmType(alarmType.name())
-                .fromUserId(fromUser.getId())
-                .targetId(post.getId())
-                .text(alarmType.getMessage())
-                .build();
-
-        alarmRepository.save(alarm);
-    }
 }
