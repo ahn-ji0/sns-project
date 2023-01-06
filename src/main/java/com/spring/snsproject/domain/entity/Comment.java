@@ -1,5 +1,6 @@
 package com.spring.snsproject.domain.entity;
 
+import com.spring.snsproject.domain.AlarmListener;
 import com.spring.snsproject.domain.dto.comment.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -174,7 +174,7 @@ public class PostService {
             post = comment.getPost();
             user = comment.getUser();
             alarmType = AlarmType.NEW_COMMENT_ON_POST;
-        } else if (object instanceof Likes) {
+        } else if(object instanceof Likes) {
             Likes likes = (Likes) object;
             post = likes.getPost();
             user = likes.getUser();

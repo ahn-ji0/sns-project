@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.entity;
+package com.spring.snsproject.domain;
 
 import com.spring.snsproject.service.PostService;
 import lombok.extern.slf4j.Slf4j;
