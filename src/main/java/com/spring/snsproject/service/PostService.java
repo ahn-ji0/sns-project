@@ -27,7 +27,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
-    private final AlarmRepository alarmRepository;
 
     public User getUserByUserName(String userName) {
         return userRepository.findByUserName(userName)
