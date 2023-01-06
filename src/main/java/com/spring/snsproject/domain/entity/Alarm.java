@@ -1,16 +1,13 @@
 package com.spring.snsproject.domain.entity;
 
-import com.spring.snsproject.domain.AlarmListener;
+import com.spring.snsproject.domain.AlarmType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -19,16 +16,16 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@EntityListeners(AlarmListener.class)
-@SQLDelete(sql = "UPDATE likes SET deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at is NULL")
-public class Likes extends BaseEntity{
+@Slf4j
+public class Alarm extends BaseEntity{
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private AlarmType alarmType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private Long fromUserId;
+    private Long targetId;
+    private String text;
 }

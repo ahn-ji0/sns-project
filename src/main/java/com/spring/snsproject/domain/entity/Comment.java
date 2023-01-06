@@ -1,5 +1,6 @@
 package com.spring.snsproject.domain.entity;
 
+import com.spring.snsproject.domain.AlarmListener;
 import com.spring.snsproject.domain.dto.comment.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@EntityListeners(AlarmListener.class)
 @SQLDelete(sql = "UPDATE comment SET deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at is NULL")
 public class Comment extends BaseEntity{
