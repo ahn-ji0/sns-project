@@ -166,27 +166,25 @@ public class PostService {
 
     public void alarm(Object object) {
         Post post = null;
-        User user = null;
+        User fromUser = null;
         AlarmType alarmType = null;
 
         if(object instanceof Comment){
             Comment comment = (Comment) object;
             post = comment.getPost();
-            user = comment.getUser();
+            fromUser = comment.getUser();
             alarmType = AlarmType.NEW_COMMENT_ON_POST;
         } else if(object instanceof Likes) {
             Likes likes = (Likes) object;
             post = likes.getPost();
-            user = likes.getUser();
+            fromUser = likes.getUser();
             alarmType = AlarmType.NEW_LIKE_ON_POST;
         }
 
-        User postWriter = post.getUser();
-
         Alarm alarm = Alarm.builder()
-                .user(postWriter)
+                .user(post.getUser())
                 .alarmType(alarmType.name())
-                .fromUserId(user.getId())
+                .fromUserId(fromUser.getId())
                 .targetId(post.getId())
                 .text(alarmType.getMessage())
                 .build();
