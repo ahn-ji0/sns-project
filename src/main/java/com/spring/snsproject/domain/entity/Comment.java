@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -15,8 +17,9 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@Slf4j
 @EntityListeners(AlarmListener.class)
+@SQLDelete(sql = "UPDATE comment SET deleted_at = current_timestamp where id = ?")
+@Where(clause = "deleted_at is NULL")
 public class Comment extends BaseEntity{
 
     @ManyToOne

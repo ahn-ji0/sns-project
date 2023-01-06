@@ -87,6 +87,8 @@ public class PostService {
         checkAuthority(user, savedPost.getUser().getUserName());
 
         //삭제
+        commentRepository.deleteAllByPost(savedPost);
+        likesRepository.deleteAllByPost(savedPost);
         postRepository.delete(savedPost);
         return savedPost.getId();
     }
@@ -161,6 +163,7 @@ public class PostService {
     public int getLikes(Long postId) {
         Post savedPost = getPostById(postId);
 
-        return savedPost.getLikes().size();
+        int numLikes = likesRepository.countByPost(savedPost);
+        return numLikes;
     }
 }
