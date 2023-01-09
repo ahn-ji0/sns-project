@@ -7,5 +7,5 @@ import lombok.Getter;
 @Getter
 public class CommentResponse {
     private String message;
-    private Long commentId;
+    private Long id;
 }
