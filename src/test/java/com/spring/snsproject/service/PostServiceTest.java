@@ -2,8 +2,8 @@ package com.spring.snsproject.service;
 
 
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.post.PostDto;
 import com.spring.snsproject.domain.dto.post.PostEditRequest;
+import com.spring.snsproject.domain.dto.post.PostResponse;
 import com.spring.snsproject.domain.dto.post.PostWriteRequest;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
@@ -39,6 +39,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("포스트 등록 성공 테스트")
     void writeSuccess() {
+        Long postId = 1l;
         User user = User.builder().id(1l).userName("안지영")
                 .role(UserRole.ROLE_USER).build();
 
@@ -49,16 +50,15 @@ public class PostServiceTest {
 
         Mockito.when(postRepository.save(any()))
                 .thenReturn(Post.builder()
-                        .id(1l)
+                        .id(postId)
                         .user(user)
                         .title(postWriteRequest.getTitle())
                         .body(postWriteRequest.getBody())
                         .build());
 
-        PostDto postDto = postService.write(postWriteRequest, "안지영");
-        assertEquals(user.getUserName(), postDto.getUserName());
-        assertEquals(postWriteRequest.getTitle(), postDto.getTitle());
-        assertEquals(postWriteRequest.getBody(), postDto.getBody());
+        PostResponse postResponse = postService.write(postWriteRequest, "안지영");
+        assertEquals(postId, postResponse.getPostId());
+
     }
 
     @Test
