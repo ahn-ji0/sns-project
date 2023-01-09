@@ -1,12 +1,12 @@
 package com.spring.snsproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.snsproject.domain.dto.post.PostDto;
-import com.spring.snsproject.domain.dto.post.PostEditRequest;
-import com.spring.snsproject.domain.dto.post.PostWriteRequest;
+import com.spring.snsproject.domain.dto.post.*;
+import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.PostService;
+import com.spring.snsproject.utils.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,12 +44,12 @@ class PostControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private PostDto postDto1;
-    private PostDto postDto2;
+    private PostGetResponse postGetResponse1;
+    private PostGetResponse postGetResponse2;
     @BeforeEach
     void setUp() {
-        postDto1 = new PostDto(1l, "name_1", "title_1", "body_1", new Timestamp(100000000), new Timestamp(100000000));
-        postDto2 = new PostDto(2l, "name_2", "title_2", "body_2", new Timestamp(1000000), new Timestamp(1000000));
+        postGetResponse1 = new PostGetResponse(1l, "name_1", "title_1", "body_1", DateUtils.dateFormat(new Timestamp(100000000)), DateUtils.dateFormat(new Timestamp(100000000)));
+        postGetResponse2 = new PostGetResponse(2l, "name_2", "title_2", "body_2", DateUtils.dateFormat(new Timestamp(1000000)), DateUtils.dateFormat(new Timestamp(1000000)));
     }
 
     @Test
@@ -58,7 +58,7 @@ class PostControllerTest {
     void getSuccess() throws Exception {
         Long postId = 1l;
 
-        given(postService.getOne(postId)).willReturn(postDto1);
+        given(postService.getOne(postId)).willReturn(postGetResponse1);
 
         mockMvc.perform(get("/api/v1/posts/1"))
                 .andExpect(status().isOk())
@@ -78,11 +78,11 @@ class PostControllerTest {
     void getAllSuccess() throws Exception {
         Pageable pageable = PageRequest.of(0, 20, Sort.by("createdAt").descending());
 
-        List<PostDto> postDtos = new ArrayList<>();
-        postDtos.add(postDto1);
-        postDtos.add(postDto2);
+        List<PostGetResponse> postGetResponses = new ArrayList<>();
+        postGetResponses.add(postGetResponse1);
+        postGetResponses.add(postGetResponse2);
 
-        given(postService.getAll(pageable)).willReturn(new PageImpl<>(postDtos));
+        given(postService.getAll(pageable)).willReturn(new PageImpl<>(postGetResponses));
 
         mockMvc.perform(get("/api/v1/posts"))
                 .andExpect(status().isOk())
@@ -99,7 +99,7 @@ class PostControllerTest {
         long postId = 1l;
         PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
 
-        given(postService.write(any(), any())).willReturn(postDto1);
+        given(postService.write(any(), any())).willReturn(new PostResponse("", postId));
 
         mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
@@ -133,7 +133,7 @@ class PostControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any())).willReturn(postDto1);
+        given(postService.edit(any(), any(), any())).willReturn(new PostResponse("", 1l));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -201,7 +201,7 @@ class PostControllerTest {
     @WithMockUser
     void deleteSuccess() throws Exception {
 
-        given(postService.delete(any(), any())).willReturn(postDto1.getId());
+        given(postService.delete(any(), any())).willReturn(new PostResponse("", 1l));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))

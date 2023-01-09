@@ -1,17 +1,13 @@
 package com.spring.snsproject.service;
 
-import com.spring.snsproject.domain.AlarmType;
 import com.spring.snsproject.domain.UserRole;
-import com.spring.snsproject.domain.dto.comment.CommentDto;
-import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
-import com.spring.snsproject.domain.dto.comment.CommentWriteRequest;
-import com.spring.snsproject.domain.dto.post.PostDto;
-import com.spring.snsproject.domain.dto.post.PostEditRequest;
-import com.spring.snsproject.domain.dto.post.PostWriteRequest;
+import com.spring.snsproject.domain.dto.comment.*;
+import com.spring.snsproject.domain.dto.post.*;
 import com.spring.snsproject.domain.entity.*;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.repository.*;
+import com.spring.snsproject.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,27 +44,30 @@ public class PostService {
     }
 
     @Transactional
-    public PostDto write(PostWriteRequest postWriteRequest, String userName){
+    public PostResponse write(PostWriteRequest postWriteRequest, String userName){
         User user = getUserByUserName(userName);
 
         Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
-        return Post.of(savedPost);
+        return new PostResponse("포스트 등록 완료",savedPost.getId());
     }
 
-    public Page<PostDto> getAll(Pageable pageable) {
+    public Page<PostGetResponse> getAll(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
-        Page<PostDto> postGetResponses = posts.map(post -> Post.of(post));
-
+        Page<PostGetResponse> postGetResponses = posts.map(post ->
+                new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUser().getUserName(),
+                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt())));
         return postGetResponses;
     }
 
-    public PostDto getOne(Long postId) {
+    public PostGetResponse getOne(Long postId) {
         Post savedPost = getPostById(postId);
-        return Post.of(savedPost);
+        PostGetResponse postGetResponse = new PostGetResponse(savedPost.getId(), savedPost.getTitle(), savedPost.getBody(), savedPost.getUser().getUserName(),
+                DateUtils.dateFormat(savedPost.getCreatedAt()), DateUtils.dateFormat(savedPost.getLastModifiedAt()));
+        return postGetResponse;
     }
 
     @Transactional
-    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
+    public PostResponse edit(Long postId, PostEditRequest postEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -78,11 +77,11 @@ public class PostService {
         //수정
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
 
-        return Post.of(savedPost);
+        return new PostResponse("포스트 수정 완료",savedPost.getId());
     }
 
     @Transactional
-    public Long delete(Long postId, String userName) {
+    public PostResponse delete(Long postId, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -93,37 +92,44 @@ public class PostService {
         commentRepository.deleteAllByPost(savedPost);
         likesRepository.deleteAllByPost(savedPost);
         postRepository.delete(savedPost);
-        return savedPost.getId();
+
+        return new PostResponse("포스트 삭제 완료", postId);
     }
 
-    public Page<PostDto> myFeed(Pageable pageable, String userName) {
+    public Page<PostGetResponse> myFeed(Pageable pageable, String userName) {
         User user = getUserByUserName(userName);
 
         Page<Post> posts = postRepository.findByUser(user, pageable);
-        Page<PostDto> postDtos = posts.map(post -> Post.of(post));
-        return postDtos;
+        Page<PostGetResponse> postGetResponses = posts.map(post ->
+               new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUser().getUserName(),
+                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt())));
+        return postGetResponses;
     }
 
     @Transactional
-    public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
+    public CommentGetResponse writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
 
         Comment savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
-        return Comment.of(savedComment);
+        CommentGetResponse commentGetResponse = new CommentGetResponse(savedComment.getId(), savedComment.getComment(), savedComment.getUser().getUserName(),
+                savedComment.getPost().getId(), DateUtils.dateFormat(savedComment.getCreatedAt()), DateUtils.dateFormat(savedComment.getLastModifiedAt()));
+        return commentGetResponse;
     }
 
-    public Page<CommentDto> getComments(Long postId, Pageable pageable) {
+    public Page<CommentGetResponse> getComments(Long postId, Pageable pageable) {
         Post savedPost = getPostById(postId);
 
         Page<Comment> comments = commentRepository.findByPost(savedPost, pageable);
-        Page<CommentDto> commentDtos = comments.map(comment -> Comment.of(comment));
-        return commentDtos;
+        Page<CommentGetResponse> commentGetResponses = comments.map(comment ->
+                new CommentGetResponse(comment.getId(), comment.getComment(), comment.getUser().getUserName(),
+                        comment.getPost().getId(), DateUtils.dateFormat(comment.getCreatedAt()), DateUtils.dateFormat(comment.getLastModifiedAt())));
+        return commentGetResponses;
     }
 
     @Transactional
-    public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
+    public CommentGetResponse editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Comment savedComment = getCommentById(commentId);
@@ -133,11 +139,13 @@ public class PostService {
         //수정
         savedComment.editComment(commentEditRequest.getComment());
 
-        return Comment.of(savedComment);
+        CommentGetResponse commentGetResponse = new CommentGetResponse(savedComment.getId(), savedComment.getComment(), savedComment.getUser().getUserName(),
+                savedComment.getPost().getId(), DateUtils.dateFormat(savedComment.getCreatedAt()), DateUtils.dateFormat(savedComment.getLastModifiedAt()));
+        return commentGetResponse;
     }
 
     @Transactional
-    public Long deleteComment(Long postId, Long commentId, String userName) {
+    public CommentResponse deleteComment(Long postId, Long commentId, String userName) {
         User user = getUserByUserName(userName);
 
         Comment savedComment = getCommentById(commentId);
@@ -146,7 +154,8 @@ public class PostService {
 
         //삭제
         commentRepository.delete(savedComment);
-        return savedComment.getId();
+
+        return new CommentResponse("댓글 삭제 완료", commentId);
     }
 
     public void pressLikes(Long postId, String userName) {

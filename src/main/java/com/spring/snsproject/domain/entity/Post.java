@@ -1,6 +1,5 @@
 package com.spring.snsproject.domain.entity;
 
-import com.spring.snsproject.domain.dto.post.PostDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,16 +27,6 @@ public class Post extends BaseEntity{
     private String title;
     private String body;
 
-    public static PostDto of(Post savedPost) {
-        return PostDto.builder()
-                .id(savedPost.getId())
-                .userName(savedPost.getUser().getUserName())
-                .title(savedPost.getTitle())
-                .body(savedPost.getBody())
-                .createdAt(savedPost.getCreatedAt())
-                .lastModifiedAt(savedPost.getLastModifiedAt())
-                .build();
-    }
     public void editPost(String title, String body){
         this.title = title;
         this.body = body;
