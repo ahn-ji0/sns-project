@@ -5,7 +5,6 @@ import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
 import com.spring.snsproject.domain.dto.token.TokenResponse;
-import com.spring.snsproject.domain.dto.user.UserDto;
 import com.spring.snsproject.domain.dto.user.UserJoinRequest;
 import com.spring.snsproject.domain.dto.user.UserJoinResponse;
 import com.spring.snsproject.domain.dto.user.UserLoginRequest;
