@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,8 @@ public class PostService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",user.getUserName()));
         }
     }
+
+    @Transactional
     public PostDto write(PostWriteRequest postWriteRequest, String userName){
         User user = getUserByUserName(userName);
 
@@ -64,6 +67,7 @@ public class PostService {
         return Post.of(savedPost);
     }
 
+    @Transactional
     public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
@@ -74,10 +78,10 @@ public class PostService {
         //수정
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
 
-        Post editedPost = postRepository.save(savedPost);
-        return Post.of(editedPost);
+        return Post.of(savedPost);
     }
 
+    @Transactional
     public Long delete(Long postId, String userName) {
         User user = getUserByUserName(userName);
 
@@ -100,6 +104,7 @@ public class PostService {
         return postDtos;
     }
 
+    @Transactional
     public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
         User user = getUserByUserName(userName);
 
@@ -117,6 +122,7 @@ public class PostService {
         return commentDtos;
     }
 
+    @Transactional
     public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
@@ -127,10 +133,10 @@ public class PostService {
         //수정
         savedComment.editComment(commentEditRequest.getComment());
 
-        Comment editedComment = commentRepository.save(savedComment);
-        return Comment.of(editedComment);
+        return Comment.of(savedComment);
     }
 
+    @Transactional
     public Long deleteComment(Long postId, Long commentId, String userName) {
         User user = getUserByUserName(userName);
 
