@@ -1,4 +1,4 @@
-package com.spring.snsproject.domain.dto;
+package com.spring.snsproject.domain.dto.alarm;
 
 import com.spring.snsproject.domain.AlarmType;
 import lombok.AllArgsConstructor;
