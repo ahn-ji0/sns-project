@@ -10,6 +10,11 @@
 - [X] ExceptionManager 구현하여 컨트롤러에서 발생하는 예외 처리
 - [X] ADMIN 회원은 다른 회원을 ADMIN 혹은 USER로 변경할 수 있는 권한 부여
 - [X] AWS EC2 인스턴스에 애플리케이션 배포
+- [X] 마이피드 기능 구현
+- [X] 댓글 조회 작성, 수정, 삭제 기능 구현
+- [X] 좋아요 누르기, 조회 기능 구현
+- [X] `EntityListener`와 `PostPersist`로 알람 기능 구현
+- [X] Soft Delete 처리
 
 ### 1주차 미션 요약
 
