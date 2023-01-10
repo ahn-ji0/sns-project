@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -19,6 +17,7 @@ import javax.persistence.ManyToOne;
 @Slf4j
 public class Alarm extends BaseEntity{
 
+    @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
     @ManyToOne
