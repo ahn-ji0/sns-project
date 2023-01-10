@@ -37,6 +37,13 @@ public class PostService {
         return commentRepository.findById(commentId).orElseThrow(()
                 -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
     }
+
+    private static void compareId(Long postId, Comment savedComment) {
+        if(savedComment.getPost().getId()!= postId){
+            throw new AppException(ErrorCode.UNMATCHED, String.format("%d번 커멘트는 %d번 포스트의 댓글이 아닙니다.",savedComment.getId(), postId));
+        }
+    }
+
     public void checkAuthority(User user, String writer){
         if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !user.getUserName().equals(writer)){
             throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",user.getUserName()));
@@ -132,7 +139,11 @@ public class PostService {
     public CommentGetResponse editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
+        Post savedPost = getPostById(postId);
+
         Comment savedComment = getCommentById(commentId);
+
+        compareId(postId, savedComment);
 
         checkAuthority(user, savedComment.getUser().getUserName());
 
@@ -144,11 +155,16 @@ public class PostService {
         return commentGetResponse;
     }
 
+
     @Transactional
     public CommentResponse deleteComment(Long postId, Long commentId, String userName) {
         User user = getUserByUserName(userName);
 
+        Post savedPost = getPostById(postId);
+
         Comment savedComment = getCommentById(commentId);
+
+        compareId(postId, savedComment);
 
         checkAuthority(user, savedComment.getUser().getUserName());
 

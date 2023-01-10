@@ -2,9 +2,11 @@ package com.spring.snsproject.service;
 
 
 import com.spring.snsproject.domain.UserRole;
+import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
 import com.spring.snsproject.domain.dto.post.PostEditRequest;
 import com.spring.snsproject.domain.dto.post.PostResponse;
 import com.spring.snsproject.domain.dto.post.PostWriteRequest;
+import com.spring.snsproject.domain.entity.Comment;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.domain.entity.User;
 import com.spring.snsproject.exception.AppException;
@@ -30,18 +32,24 @@ public class PostServiceTest {
     private LikesRepository likesRepository = Mockito.mock(LikesRepository.class);
 
     private PostService postService;
+    private User user1;
+    private User user2;
+    private Post post1;
+    private Post post2;
+    private Comment comment1;
 
     @BeforeEach
     void setUp() {
         postService = new PostService(userRepository, postRepository,commentRepository,likesRepository);
+        user1 = User.builder().id(1l).userName("안지영").role(UserRole.ROLE_USER).build();
+        user2 = User.builder().id(2l).userName("영지안").role(UserRole.ROLE_USER).build();
     }
 
     @Test
     @DisplayName("포스트 등록 성공 테스트")
     void writeSuccess() {
         Long postId = 1l;
-        User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.ROLE_USER).build();
+        User user = user1;
 
         PostWriteRequest postWriteRequest = new PostWriteRequest("제목입니다.", "내용입니다.");
 
@@ -92,8 +100,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("포스트 수정 실패 테스트 - 포스트 존재하지 않을 때")
     void editFail2() {
-        User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.ROLE_USER).build();
+        User user = user1;
 
         PostEditRequest postEditRequests = new PostEditRequest("제목 수정합니다.", "내용 수정합니다.");
 
@@ -111,18 +118,11 @@ public class PostServiceTest {
     @Test
     @DisplayName("포스트 수정 실패 테스트 - 작성자와 유저가 다를 때")
     void editFail3() {
-        User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.ROLE_USER).build();
+        User user = user1;
 
-        User postWrittenUser = User.builder().id(2l).userName("영지안")
-                .role(UserRole.ROLE_USER).build();
+        User postWrittenUser = user2;
 
-        Post post = Post.builder()
-                .id(1l)
-                .title("제목입니다.")
-                .body("내용입니다.")
-                .user(postWrittenUser)
-                .build();
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(postWrittenUser).build();
 
         PostEditRequest postEditRequests = new PostEditRequest("제목 수정합니다.", "내용 수정합니다.");
 
@@ -152,8 +152,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("포스트 삭제 실패 테스트 - 포스트 존재하지 않을 때")
     void deleteFail2() {
-        User user = User.builder().id(1l).userName("안지영")
-                .role(UserRole.ROLE_USER).build();
+        User user = user1;
 
         Mockito.when(userRepository.findByUserName(any()))
                 .thenReturn(Optional.of(user));
@@ -163,6 +162,224 @@ public class PostServiceTest {
 
         assertThrows(AppException.class, () -> {
             postService.delete(1l, user.getUserName());
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 - 유저가 존재하지 않을 때")
+    void editCommentFail() {
+
+        CommentEditRequest commentEditRequest = new CommentEditRequest("댓글 수정");
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.editComment(1l, 1l, commentEditRequest, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 - 포스트가 존재하지 않을 때")
+    void editCommentFail2() {
+
+        User user = user1;
+
+        CommentEditRequest commentEditRequest = new CommentEditRequest("댓글 수정");
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+
+        assertThrows(AppException.class, () -> {
+            postService.editComment(1l, 1l, commentEditRequest, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 - 댓글이 존재하지 않을 때")
+    void editCommentFail3() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        CommentEditRequest commentEditRequest = new CommentEditRequest("댓글 수정");
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.editComment(1l, 1l, commentEditRequest, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 - 댓글이 해당 포스트의 것이 아닐때")
+    void editCommentFail4() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        Post post2 = Post.builder().id(2l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        Comment comment = Comment.builder().id(1l).comment("댓글").post(post2).user(user).build();
+
+        CommentEditRequest commentEditRequest = new CommentEditRequest("댓글 수정");
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                .thenReturn(Optional.of(comment));
+
+        assertThrows(AppException.class, () -> {
+            postService.editComment(1l, 1l, commentEditRequest, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 테스트 - 작성자!=유저")
+    void editCommentFail5() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        User commentWrittenUser = user2;
+
+        Comment comment = Comment.builder().id(1l).comment("댓글").post(post).user(commentWrittenUser).build();
+
+        CommentEditRequest commentEditRequest = new CommentEditRequest("댓글 수정");
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                        .thenReturn(Optional.of(comment));
+
+        assertThrows(AppException.class, () -> {
+            postService.editComment(1l, 1l, commentEditRequest, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 - 유저가 존재하지 않을 때")
+    void deleteCommentFail() {
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.deleteComment(1l, 1l, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 - 포스트가 존재하지 않을 때")
+    void deleteCommentFail2() {
+
+        User user = user1;
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+
+        assertThrows(AppException.class, () -> {
+            postService.deleteComment(1l, 1l, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 - 댓글이 존재하지 않을 때")
+    void deleteCommentFail3() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                .thenReturn(Optional.ofNullable(null));
+
+        assertThrows(AppException.class, () -> {
+            postService.deleteComment(1l, 1l, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 - 댓글이 해당 포스트의 것이 아닐때")
+    void deleteCommentFail4() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        Post post2 = Post.builder().id(2l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        Comment comment = Comment.builder().id(1l).comment("댓글").post(post2).user(user).build();
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                .thenReturn(Optional.of(comment));
+
+        assertThrows(AppException.class, () -> {
+            postService.deleteComment(1l, 1l, "유저네임");
+        });
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 테스트 - 작성자!=유저")
+    void deleteCommentFail5() {
+
+        User user = user1;
+
+        Post post = Post.builder().id(1l).title("제목입니다.").body("내용입니다.").user(user).build();
+
+        User commentWrittenUser = user2;
+
+        Comment comment = Comment.builder().id(1l).comment("댓글").post(post).user(commentWrittenUser).build();
+
+        Mockito.when(userRepository.findByUserName(any()))
+                .thenReturn(Optional.of(user));
+
+        Mockito.when(postRepository.findById(any()))
+                .thenReturn(Optional.of(post));
+
+        Mockito.when(commentRepository.findById(any()))
+                .thenReturn(Optional.of(comment));
+
+        assertThrows(AppException.class, () -> {
+            postService.deleteComment(1l, 1l, "유저네임");
         });
     }
 }
