@@ -2,11 +2,8 @@ package com.spring.snsproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.snsproject.domain.AlarmType;
-import com.spring.snsproject.domain.dto.AlarmGetResponse;
-import com.spring.snsproject.domain.dto.comment.CommentGetResponse;
-import com.spring.snsproject.domain.dto.post.PostGetResponse;
+import com.spring.snsproject.domain.dto.alarm.AlarmGetResponse;
 import com.spring.snsproject.service.AlarmService;
-import com.spring.snsproject.service.PostService;
 import com.spring.snsproject.utils.DateUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +17,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

@@ -1,7 +1,7 @@
 package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.AlarmType;
-import com.spring.snsproject.domain.dto.AlarmGetResponse;
+import com.spring.snsproject.domain.dto.alarm.AlarmGetResponse;
 import com.spring.snsproject.domain.entity.*;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;

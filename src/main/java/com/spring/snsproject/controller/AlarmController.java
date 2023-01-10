@@ -1,14 +1,9 @@
 package com.spring.snsproject.controller;
 
 import com.spring.snsproject.domain.Response;
-import com.spring.snsproject.domain.dto.AlarmGetResponse;
-import com.spring.snsproject.domain.dto.comment.*;
-import com.spring.snsproject.domain.dto.post.*;
+import com.spring.snsproject.domain.dto.alarm.AlarmGetResponse;
 import com.spring.snsproject.service.AlarmService;
-import com.spring.snsproject.service.PostService;
-import com.spring.snsproject.utils.DateUtils;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
