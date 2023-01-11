@@ -44,9 +44,9 @@ public class PostService {
         }
     }
 
-    public void checkAuthority(User user, String writer){
-        if(!user.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !user.getUserName().equals(writer)){
-            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",user.getUserName()));
+    public void checkAuthority(User authenticatedUser, User writer){
+        if(!authenticatedUser.getRole().equals(UserRole.ROLE_ADMIN.toString()) && !authenticatedUser.getId().equals(writer.getId())){
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("%s님은 해당 포스트를 수정할 수 없습니다.",authenticatedUser.getUserName()));
         }
     }
 
@@ -79,7 +79,7 @@ public class PostService {
 
         Post savedPost = getPostById(postId);
 
-        checkAuthority(user,savedPost.getUser().getUserName());
+        checkAuthority(user,savedPost.getUser());
 
         //수정
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
@@ -93,7 +93,7 @@ public class PostService {
 
         Post savedPost = getPostById(postId);
 
-        checkAuthority(user, savedPost.getUser().getUserName());
+        checkAuthority(user, savedPost.getUser());
 
         //삭제
         commentRepository.deleteAllByPost(savedPost);
@@ -145,7 +145,7 @@ public class PostService {
 
         compareId(postId, savedComment);
 
-        checkAuthority(user, savedComment.getUser().getUserName());
+        checkAuthority(user, savedComment.getUser());
 
         //수정
         savedComment.editComment(commentEditRequest.getComment());
@@ -166,7 +166,7 @@ public class PostService {
 
         compareId(postId, savedComment);
 
-        checkAuthority(user, savedComment.getUser().getUserName());
+        checkAuthority(user, savedComment.getUser());
 
         //삭제
         commentRepository.delete(savedComment);
