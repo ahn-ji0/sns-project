@@ -1,0 +1,27 @@
+{{>layouts/header}}
+{{#post}}
+    <table class="table">
+        <tbody>
+        <tr>
+            <th scope="row">id</th>
+            <td>{{id}}</td>
+        </tr>
+        <tr>
+            <th scope="row">제목</th>
+            <td>{{title}}</td>
+        </tr>
+        <tr>
+            <th scope="row">내용</th>
+            <td>{{body}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="/posts/{{id}}/delete" class="btn btn-danger" style="float:right">삭제</a>
+    <a href="/posts/{{id}}/edit" class="btn btn-primary" style="float:right">수정</a>
+{{/post}}
+{{>layouts/footer}}
+
+
+
+
+
