@@ -18,7 +18,7 @@ import org.springframework.data.domain.Sort;
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
 @Slf4j
-public class PostController {
+public class PostRestController {
 
     private final PostService postService;
 

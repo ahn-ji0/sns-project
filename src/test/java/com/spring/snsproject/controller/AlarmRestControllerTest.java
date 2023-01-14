@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AlarmController.class)
-class AlarmControllerTest {
+@WebMvcTest(AlarmRestController.class)
+class AlarmRestControllerTest {
     @Autowired
     MockMvc mockMvc;
 
