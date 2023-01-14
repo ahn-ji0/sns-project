@@ -6,7 +6,6 @@ import com.spring.snsproject.domain.dto.comment.CommentGetResponse;
 import com.spring.snsproject.domain.dto.comment.CommentResponse;
 import com.spring.snsproject.domain.dto.comment.CommentWriteRequest;
 import com.spring.snsproject.domain.dto.post.*;
-import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
 import com.spring.snsproject.service.PostService;
@@ -24,8 +23,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -39,8 +36,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(PostController.class)
-class PostControllerTest {
+@WebMvcTest(PostRestController.class)
+class PostRestControllerTest {
 
     @Autowired
     MockMvc mockMvc;

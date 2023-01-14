@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/alarms")
 @RequiredArgsConstructor
 @Slf4j
-public class AlarmController {
+public class AlarmRestController {
 
     private final AlarmService alarmService;
 
