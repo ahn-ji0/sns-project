@@ -1,27 +1,27 @@
 {{>layouts/header}}
-{{#post}}
-    <table class="table">
-        <tbody>
-        <tr>
-            <th scope="row">id</th>
-            <td>{{id}}</td>
-        </tr>
-        <tr>
-            <th scope="row">제목</th>
-            <td>{{title}}</td>
-        </tr>
-        <tr>
-            <th scope="row">내용</th>
-            <td>{{body}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <a href="/posts/{{id}}/delete" class="btn btn-danger" style="float:right">삭제</a>
-    <a href="/posts/{{id}}/edit" class="btn btn-primary" style="float:right">수정</a>
-{{/post}}
+<!-- Main -->
+<div id="main">
+    {{#post}}
+        <!-- Post -->
+        <article class="post">
+            <header>
+                <div class="title">
+                    <h2>{{title}}</h2>
+                </div>
+                <div class="meta">
+                    <time class="published" datetime="2015-11-01">{{createdAt}}</time>
+                    <a href="#" class="author"><span class="name">{{userName}}</span></a>
+                </div>
+            </header>
+            <p>{{body}}</p>
+            <footer>
+                <ul class="stats">
+                    <li><a href="#">General</a></li>
+                    <li><a href="/posts/{{id}}/likes" class="icon solid fa-heart">좋아요</a></li>
+                    <li><a href="/posts/" class="icon solid fa-comment">댓글</a></li>
+                </ul>
+            </footer>
+        </article>
+    {{/post}}
+</div>
 {{>layouts/footer}}
-
-
-
-
-

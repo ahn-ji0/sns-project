@@ -1,47 +1,64 @@
 {{>layouts/header}}
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col">id</th>
-        <th scope="col">제목</th>
-        <th scope="col">내용</th>
-        <th scope="col">작성자</th>
-        <th scope="col">작성 날짜</th>
-        <th scope="col">최근 수정 날짜</th>
+<div id="main">
 
-    </tr>
-    </thead>
-    <tbody>
+    <!-- Post -->
     {{#posts}}
-        <tr>
-            <th scope="row">{{id}}</th>
-            <td style="width: 15%"><a href="/posts/{{id}}">{{title}}</a></td>
-            <td style="width: 40%">{{body}}</td>
-            <td>{{userName}}</td>
-            <td>{{createdAt}}</td>
-            <td>{{lastModifiedAt}}</td>
-
-        </tr>
+        <article class="post">
+            <header>
+                <div class="title">
+                    <h3>{{title}}</h3>
+                </div>
+                <div class="meta">
+                    <time class="published" datetime="2015-11-01">{{createdAt}}</time>
+                    <a href="#" class="author"><span class="name">{{userName}}</span></a>
+                </div>
+            </header>
+            <p>{{body}}</p>
+            <footer>
+                <ul class="actions">
+                    <li><a href="/posts/{{id}}" class="button large">자세히 보기</a></li>
+                </ul>
+                <ul class="stats">
+                    <li><a href="#" class="icon solid fa-heart">좋아요</a></li>
+                    <li><a href="#" class="icon solid fa-comment">댓글</a></li>
+                </ul>
+            </footer>
+        </article>
     {{/posts}}
-    </tbody>
-</table>
-<!--<div class="d-grid gap-2">-->
-<!--    <a href="/articles/new" class="btn btn-outline-success">추가</a>-->
-<!--</div>-->
-<nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-end">
-        <li class="page-item">
-            <a class="page-link" href="/posts/list?page={{previousPage}}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">Previous</span>
-            </a>
-        </li>
-        <li class="page-item">
-            <a class="page-link" href="/posts/list?page={{nextPage}}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-            <span class="sr-only">Next</span>
-            </a>
-        </li>
+
+    <!-- Pagination -->
+    <ul class="actions pagination">
+        <li><a href="/posts/list?page={{previousPage}}" class="button large previous">Previous Page</a></li>
+        <li><a href="/posts/list?page={{nextPage}}" class="button large next">Next Page</a></li>
     </ul>
-</nav>
+
+</div>
+
+<!-- Sidebar -->
+<section id="sidebar">
+
+    <!-- Intro -->
+    <section id="intro">
+        <a href="#" class="logo"></a>
+        <header>
+            <h2>SNS</h2>
+            <p>나의 일상을 공유하세요</p>
+        </header>
+    </section>
+
+    <!-- Posts List -->
+    <section>
+        <ul class="posts">
+            {{#posts}}
+                <li>
+                    <article>
+                        <header>
+                            <h3><a href="/posts/{{id}}">{{title}}</a></h3>
+                            <time class="published" datetime="2015-10-20">{{createdAt}}</time>
+                        </header>
+                    </article>
+                </li>
+            {{/posts}}
+        </ul>
+    </section>
 {{>layouts/footer}}
