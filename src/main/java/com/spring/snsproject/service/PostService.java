@@ -29,11 +29,11 @@ public class PostService {
         return userRepository.findByUserName(userName)
                 .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
     }
-    public Post getPostById(Long postId){
+    private Post getPostById(Long postId){
         return postRepository.findById(postId).orElseThrow(()
                 -> new AppException(ErrorCode.POST_NOT_FOUND, String.format("%d번 포스트는 존재하지 않습니다.",postId)));
     }
-    public Comment getCommentById(Long commentId){
+    private Comment getCommentById(Long commentId){
         return commentRepository.findById(commentId).orElseThrow(()
                 -> new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
     }
@@ -122,6 +122,16 @@ public class PostService {
         return comments.map(comment -> Comment.of(comment));
     }
 
+    public CommentDto getOneComment(Long postId, Long commentId){
+        Post savedPost = getPostById(postId);
+
+        Comment savedComment = commentRepository.findById(commentId).orElseThrow(() ->
+                new AppException(ErrorCode.COMMENT_NOT_FOUND, String.format("%d번 댓글은 존재하지 않습니다.",commentId)));
+
+        compareId(postId, savedComment);
+
+        return Comment.of(savedComment);
+    }
     @Transactional
     public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
