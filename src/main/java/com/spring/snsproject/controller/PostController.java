@@ -1,9 +1,6 @@
 package com.spring.snsproject.controller;
 
-import com.spring.snsproject.domain.dto.post.PostEditRequest;
-import com.spring.snsproject.domain.dto.post.PostGetResponse;
-import com.spring.snsproject.domain.dto.post.PostResponse;
-import com.spring.snsproject.domain.dto.post.PostWriteRequest;
+import com.spring.snsproject.domain.dto.post.*;
 import com.spring.snsproject.domain.entity.Post;
 import com.spring.snsproject.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +27,7 @@ public class PostController {
 
     @GetMapping("/list")
     public String getAll(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable, Model model){
-        Page<PostGetResponse> posts = postService.getAll(pageable);
+        Page<PostDto> posts = postService.getAll(pageable);
         model.addAttribute("posts", posts);
         model.addAttribute("previousPage", posts.previousOrFirstPageable().getPageNumber());
         model.addAttribute("nextPage",posts.nextOrLastPageable().getPageNumber());
@@ -39,7 +36,7 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public String getOne(@PathVariable Long postId, Model model){
-        PostGetResponse post = postService.getOne(postId);
+        PostDto post = postService.getOne(postId);
         model.addAttribute("post", post);
         return "posts/show";
     }
@@ -51,8 +48,8 @@ public class PostController {
 
     @PostMapping ("/new")
     public String postNew(PostWriteRequest postWriteRequest, Authentication authentication, Model model){
-        postService.write(postWriteRequest, authentication.getName());
-        return "redirect:/posts/list";
+        PostDto postDto = postService.write(postWriteRequest, authentication.getName());
+        return String.format("redirect:/posts/%d",postDto.getId());
     }
 
     @GetMapping("/{postId}/edit")
@@ -63,8 +60,8 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public String modify(@PathVariable Long postId, PostEditRequest postEditRequest, Authentication authentication){
-        postService.edit(postId, postEditRequest, authentication.getName());
-        return "redirect:/posts/list";
+        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName());
+        return String.format("redirect:/posts/%d",postDto.getId());
     }
 
     @DeleteMapping("/{postId}")

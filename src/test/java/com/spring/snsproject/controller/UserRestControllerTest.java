@@ -5,6 +5,7 @@ import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
 import com.spring.snsproject.domain.dto.token.TokenResponse;
+import com.spring.snsproject.domain.dto.user.UserDto;
 import com.spring.snsproject.domain.dto.user.UserJoinRequest;
 import com.spring.snsproject.domain.dto.user.UserJoinResponse;
 import com.spring.snsproject.domain.dto.user.UserLoginRequest;
@@ -46,7 +47,7 @@ class UserRestControllerTest {
     void joinSuccess() throws Exception {
         UserJoinRequest request = new UserJoinRequest("개발자","1234");
 
-        given(userService.join(any())).willReturn(new UserJoinResponse(1l, "name"));
+        given(userService.join(any())).willReturn(UserDto.builder().id(1l).userName("개발자").build());
 
         mockMvc.perform(post("/api/v1/users/join").with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +81,7 @@ class UserRestControllerTest {
     void loginSuccess() throws Exception {
         UserLoginRequest request = new UserLoginRequest("개발자","1234");
 
-        given(userService.login(any())).willReturn(new TokenResponse("test token"));
+        given(userService.login(any())).willReturn("test token");
 
         mockMvc.perform(post("/api/v1/users/login").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +130,7 @@ class UserRestControllerTest {
 
         RoleChangeRequest request = new RoleChangeRequest("admin");
 
-        given(userService.changeRole(any(), any())).willReturn(new RoleChangeResponse(1l, "name", UserRole.ROLE_ADMIN));
+        given(userService.changeRole(any(), any())).willReturn(UserDto.builder().id(1l).role(UserRole.ROLE_ADMIN).build());
 
         mockMvc.perform(post("/api/v1/users/1/role/change")
                         .with(csrf())

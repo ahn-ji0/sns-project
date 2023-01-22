@@ -3,6 +3,7 @@ package com.spring.snsproject.service;
 
 import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
+import com.spring.snsproject.domain.dto.post.PostDto;
 import com.spring.snsproject.domain.dto.post.PostEditRequest;
 import com.spring.snsproject.domain.dto.post.PostResponse;
 import com.spring.snsproject.domain.dto.post.PostWriteRequest;
@@ -34,9 +35,6 @@ public class PostServiceTest {
     private PostService postService;
     private User user1;
     private User user2;
-    private Post post1;
-    private Post post2;
-    private Comment comment1;
 
     @BeforeEach
     void setUp() {
@@ -64,8 +62,8 @@ public class PostServiceTest {
                         .body(postWriteRequest.getBody())
                         .build());
 
-        PostResponse postResponse = postService.write(postWriteRequest, "안지영");
-        assertEquals(postId, postResponse.getPostId());
+        PostDto postDto = postService.write(postWriteRequest, "안지영");
+        assertEquals(postId, postDto.getId());
 
     }
 

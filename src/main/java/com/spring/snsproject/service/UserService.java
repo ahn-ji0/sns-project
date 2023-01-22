@@ -4,6 +4,7 @@ import com.spring.snsproject.domain.UserRole;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
 import com.spring.snsproject.domain.dto.token.TokenResponse;
+import com.spring.snsproject.domain.dto.user.UserDto;
 import com.spring.snsproject.domain.dto.user.UserJoinRequest;
 import com.spring.snsproject.domain.dto.user.UserJoinResponse;
 import com.spring.snsproject.domain.dto.user.UserLoginRequest;
@@ -28,7 +29,7 @@ public class UserService {
     private String secretKey;
     private long expiredTimeMs = 1000 * 60 * 60;
 
-    public UserJoinResponse join(UserJoinRequest userJoinRequest){
+    public UserDto join(UserJoinRequest userJoinRequest){
 
         // 유저네임 중복 확인
         userRepository.findByUserName(userJoinRequest.getUserName()).ifPresent(user -> {
@@ -38,10 +39,10 @@ public class UserService {
         // DB에 이름, 비밀번호(인코딩) 저장
         User user = userRepository.save(userJoinRequest.toEntity(encoder.encode(userJoinRequest.getPassword()), UserRole.ROLE_USER));
 
-        return new UserJoinResponse(user.getId(), user.getUserName());
+        return User.of(user);
     }
 
-    public TokenResponse login(UserLoginRequest userLoginRequest) {
+    public String login(UserLoginRequest userLoginRequest) {
         // 유저 네임 존재 확인
         User user = userRepository.findByUserName(userLoginRequest.getUserName()).orElseThrow(()->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, String.format("%s는 존재하지 않는 유저네임입니다.",userLoginRequest.getUserName())));
@@ -53,8 +54,7 @@ public class UserService {
 
         // jwt 토큰 발급
         String jwt = JwtUtils.createToken(user.getUserName(), secretKey, expiredTimeMs);
-
-        return new TokenResponse(jwt);
+        return jwt;
     }
 
     public User getUserByUserName(String userName) {
@@ -62,7 +62,7 @@ public class UserService {
                 .orElseThrow(()->new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
     }
 
-    public RoleChangeResponse changeRole(Long id, RoleChangeRequest roleChangeRequest) {
+    public UserDto changeRole(Long id, RoleChangeRequest roleChangeRequest) {
         User savedUser = userRepository.findById(id).orElseThrow(()->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND,"존재하지 않는 유저입니다."));
         String role = roleChangeRequest.getRole();
@@ -76,6 +76,6 @@ public class UserService {
         }
 
         User roleChangedUser =  userRepository.save(savedUser);
-        return new RoleChangeResponse(roleChangedUser.getId(), roleChangedUser.getUserName(), roleChangedUser.getRole());
+        return User.of(roleChangedUser);
     }
 }

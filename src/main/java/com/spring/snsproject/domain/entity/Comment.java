@@ -1,6 +1,7 @@
 package com.spring.snsproject.domain.entity;
 
 import com.spring.snsproject.domain.AlarmListener;
+import com.spring.snsproject.domain.dto.comment.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,18 @@ public class Comment extends BaseEntity{
     private User user;
 
     private String comment;
+
+    public static CommentDto of(Comment comment) {
+        return CommentDto.builder()
+                .id(comment.getId())
+                .postId(comment.getPost().getId())
+                .userName(comment.getUser().getUserName())
+                .comment(comment.getComment())
+                .createdAt(comment.getCreatedAt())
+                .lastModifiedAt(comment.getLastModifiedAt())
+                .build();
+    }
+
 
     public void editComment(String comment) {
         this.comment = comment;

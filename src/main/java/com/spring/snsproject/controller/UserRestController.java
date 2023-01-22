@@ -4,6 +4,7 @@ import com.spring.snsproject.domain.Response;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
 import com.spring.snsproject.domain.dto.token.TokenResponse;
+import com.spring.snsproject.domain.dto.user.UserDto;
 import com.spring.snsproject.domain.dto.user.UserJoinRequest;
 import com.spring.snsproject.domain.dto.user.UserJoinResponse;
 import com.spring.snsproject.domain.dto.user.UserLoginRequest;
@@ -23,20 +24,20 @@ public class UserRestController {
     @PostMapping("/join")
     @ApiOperation(value="회원가입 기능", notes ="유저 이름과 비밀번호를 입력하세요.")
     public Response join(@RequestBody UserJoinRequest userJoinRequest){
-        UserJoinResponse userJoinResponse = userService.join(userJoinRequest);
-        return Response.success(userJoinResponse);
+        UserDto userDto = userService.join(userJoinRequest);
+        return Response.success(new UserJoinResponse(userDto.getId(), userDto.getUserName()));
     }
 
     @PostMapping("/login")
     @ApiOperation(value = "로그인 기능", notes = "가입했던 유저 이름과 비밀번호를 입력하세요.")
     public Response login(@RequestBody UserLoginRequest userLoginRequest){
-        TokenResponse tokenResponse = userService.login(userLoginRequest);
-        return Response.success(tokenResponse);
+        String jwt = userService.login(userLoginRequest);
+        return Response.success(new TokenResponse(jwt));
     }
 
     @PostMapping("{id}/role/change")
     public Response changeRole(@PathVariable Long id, @RequestBody RoleChangeRequest roleChangeRequest){
-        RoleChangeResponse roleChangeResponse = userService.changeRole(id, roleChangeRequest);
-        return Response.success(roleChangeResponse);
+        UserDto userDto = userService.changeRole(id, roleChangeRequest);
+        return Response.success(new RoleChangeResponse(userDto.getId(), userDto.getUserName(), userDto.getRole()));
     }
 }

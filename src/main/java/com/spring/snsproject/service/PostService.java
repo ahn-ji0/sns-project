@@ -51,30 +51,25 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse write(PostWriteRequest postWriteRequest, String userName){
+    public PostDto write(PostWriteRequest postWriteRequest, String userName){
         User user = getUserByUserName(userName);
 
         Post savedPost = postRepository.save(postWriteRequest.toEntity(user));
-        return new PostResponse("포스트 등록 완료",savedPost.getId());
+        return Post.of(savedPost);
     }
 
-    public Page<PostGetResponse> getAll(Pageable pageable) {
+    public Page<PostDto> getAll(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
-        Page<PostGetResponse> postGetResponses = posts.map(post ->
-                new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUser().getUserName(),
-                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt())));
-        return postGetResponses;
+        return posts.map(post -> Post.of(post));
     }
 
-    public PostGetResponse getOne(Long postId) {
+    public PostDto getOne(Long postId) {
         Post savedPost = getPostById(postId);
-        PostGetResponse postGetResponse = new PostGetResponse(savedPost.getId(), savedPost.getTitle(), savedPost.getBody(), savedPost.getUser().getUserName(),
-                DateUtils.dateFormat(savedPost.getCreatedAt()), DateUtils.dateFormat(savedPost.getLastModifiedAt()));
-        return postGetResponse;
+        return Post.of(savedPost);
     }
 
     @Transactional
-    public PostResponse edit(Long postId, PostEditRequest postEditRequest, String userName) {
+    public PostDto edit(Long postId, PostEditRequest postEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -84,11 +79,11 @@ public class PostService {
         //수정
         savedPost.editPost(postEditRequest.getTitle(), postEditRequest.getBody());
 
-        return new PostResponse("포스트 수정 완료",savedPost.getId());
+        return Post.of(savedPost);
     }
 
     @Transactional
-    public PostResponse delete(Long postId, String userName) {
+    public Long delete(Long postId, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -100,43 +95,35 @@ public class PostService {
         likesRepository.deleteAllByPost(savedPost);
         postRepository.delete(savedPost);
 
-        return new PostResponse("포스트 삭제 완료", postId);
+        return savedPost.getId();
     }
 
-    public Page<PostGetResponse> myFeed(Pageable pageable, String userName) {
+    public Page<PostDto> myFeed(Pageable pageable, String userName) {
         User user = getUserByUserName(userName);
 
         Page<Post> posts = postRepository.findByUser(user, pageable);
-        Page<PostGetResponse> postGetResponses = posts.map(post ->
-               new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUser().getUserName(),
-                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt())));
-        return postGetResponses;
+        return posts.map(post -> Post.of(post));
     }
 
     @Transactional
-    public CommentGetResponse writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
+    public CommentDto writeComment(Long postId, CommentWriteRequest commentWriteRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
 
         Comment savedComment = commentRepository.save(commentWriteRequest.toEntity(user,savedPost));
-        CommentGetResponse commentGetResponse = new CommentGetResponse(savedComment.getId(), savedComment.getComment(), savedComment.getUser().getUserName(),
-                savedComment.getPost().getId(), DateUtils.dateFormat(savedComment.getCreatedAt()), DateUtils.dateFormat(savedComment.getLastModifiedAt()));
-        return commentGetResponse;
+        return Comment.of(savedComment);
     }
 
-    public Page<CommentGetResponse> getComments(Long postId, Pageable pageable) {
+    public Page<CommentDto> getComments(Long postId, Pageable pageable) {
         Post savedPost = getPostById(postId);
 
         Page<Comment> comments = commentRepository.findByPost(savedPost, pageable);
-        Page<CommentGetResponse> commentGetResponses = comments.map(comment ->
-                new CommentGetResponse(comment.getId(), comment.getComment(), comment.getUser().getUserName(),
-                        comment.getPost().getId(), DateUtils.dateFormat(comment.getCreatedAt()), DateUtils.dateFormat(comment.getLastModifiedAt())));
-        return commentGetResponses;
+        return comments.map(comment -> Comment.of(comment));
     }
 
     @Transactional
-    public CommentGetResponse editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
+    public CommentDto editComment(Long postId, Long commentId, CommentEditRequest commentEditRequest, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -150,14 +137,12 @@ public class PostService {
         //수정
         savedComment.editComment(commentEditRequest.getComment());
 
-        CommentGetResponse commentGetResponse = new CommentGetResponse(savedComment.getId(), savedComment.getComment(), savedComment.getUser().getUserName(),
-                savedComment.getPost().getId(), DateUtils.dateFormat(savedComment.getCreatedAt()), DateUtils.dateFormat(savedComment.getLastModifiedAt()));
-        return commentGetResponse;
+        return Comment.of(savedComment);
     }
 
 
     @Transactional
-    public CommentResponse deleteComment(Long postId, Long commentId, String userName) {
+    public Long deleteComment(Long postId, Long commentId, String userName) {
         User user = getUserByUserName(userName);
 
         Post savedPost = getPostById(postId);
@@ -171,7 +156,7 @@ public class PostService {
         //삭제
         commentRepository.delete(savedComment);
 
-        return new CommentResponse("댓글 삭제 완료", commentId);
+        return savedComment.getId();
     }
 
     public void pressLikes(Long postId, String userName) {
@@ -184,10 +169,7 @@ public class PostService {
             throw new AppException(ErrorCode.DUPLICATE_LIKES, String.format("%s님은 이미 %d번 포스트에 좋아요를 눌렀습니다.",userName, postId));
         });
 
-        likesRepository.save(Likes.builder()
-                .post(savedPost)
-                .user(user)
-                .build());
+        likesRepository.save(Likes.builder().post(savedPost).user(user).build());
     }
 
     public int getLikes(Long postId) {
