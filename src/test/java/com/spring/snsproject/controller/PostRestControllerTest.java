@@ -1,10 +1,7 @@
 package com.spring.snsproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.snsproject.domain.dto.comment.CommentEditRequest;
-import com.spring.snsproject.domain.dto.comment.CommentGetResponse;
-import com.spring.snsproject.domain.dto.comment.CommentResponse;
-import com.spring.snsproject.domain.dto.comment.CommentWriteRequest;
+import com.spring.snsproject.domain.dto.comment.*;
 import com.spring.snsproject.domain.dto.post.*;
 import com.spring.snsproject.exception.AppException;
 import com.spring.snsproject.exception.ErrorCode;
@@ -48,17 +45,17 @@ class PostRestControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private PostGetResponse postGetResponse1;
-    private PostGetResponse postGetResponse2;
-    private CommentGetResponse commentGetResponse1;
-    private CommentGetResponse commentGetResponse2;
+    private PostDto postDto1;
+    private PostDto postDto2;
+    private CommentDto commentDto1;
+    private CommentDto commentDto2;
 
     @BeforeEach
     void setUp() {
-        postGetResponse1 = new PostGetResponse(1l, "title_1", "body_1","name_1", DateUtils.dateFormat(new Timestamp(100000000)), DateUtils.dateFormat(new Timestamp(100000000)));
-        postGetResponse2 = new PostGetResponse(2l, "title_2", "body_2","name_2", DateUtils.dateFormat(new Timestamp(1000000)), DateUtils.dateFormat(new Timestamp(1000000)));
-        commentGetResponse1 = new CommentGetResponse(1l, "comment_1", "user_1", 1l, DateUtils.dateFormat(new Timestamp(1000000)), DateUtils.dateFormat(new Timestamp(1000000)));
-        commentGetResponse2 = new CommentGetResponse(2l, "comment_2", "user_2", 2l, DateUtils.dateFormat(new Timestamp(1000000)), DateUtils.dateFormat(new Timestamp(1000000)));
+        postDto1 = new PostDto(1l, "name_1","title_1", "body_1", new Timestamp(100000000), new Timestamp(100000000));
+        postDto2 = new PostDto(2l, "name_2","title_2", "body_2", new Timestamp(1000000), new Timestamp(1000000));
+        commentDto1 = new CommentDto(1l, 1l, "user_1", "comment_1", new Timestamp(1000000), new Timestamp(1000000));
+        commentDto2 = new CommentDto(2l, 2l, "user_2", "comment_2", new Timestamp(1000000), new Timestamp(1000000));
     }
 
     @Test
@@ -67,7 +64,7 @@ class PostRestControllerTest {
     void getSuccess() throws Exception {
         Long postId = 1l;
 
-        given(postService.getOne(postId)).willReturn(postGetResponse1);
+        given(postService.getOne(postId)).willReturn(postDto1);
 
         mockMvc.perform(get("/api/v1/posts/1"))
                 .andExpect(status().isOk())
@@ -100,10 +97,10 @@ class PostRestControllerTest {
     @DisplayName("포스트 작성 성공 테스트")
     @WithMockUser
     void writeSuccess() throws Exception {
-        long postId = 1l;
+
         PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
 
-        given(postService.write(any(), any())).willReturn(new PostResponse("", postId));
+        given(postService.write(any(), any())).willReturn(postDto1);
 
         mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
@@ -117,7 +114,7 @@ class PostRestControllerTest {
     @DisplayName("포스트 작성 실패 테스트 - 인증 실패")
     @WithMockUser
     void writeFail() throws Exception {
-        long postId = 1l;
+
         PostWriteRequest request = new PostWriteRequest("제목입니다.", "내용입니다.");
 
         given(postService.write(any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "접근 권한이 없습니다."));
@@ -137,7 +134,7 @@ class PostRestControllerTest {
 
         PostEditRequest request = new PostEditRequest("제목입니다.", "내용입니다.");
 
-        given(postService.edit(any(), any(), any())).willReturn(new PostResponse("", 1l));
+        given(postService.edit(any(), any(), any())).willReturn(postDto1);
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -205,7 +202,9 @@ class PostRestControllerTest {
     @WithMockUser
     void deleteSuccess() throws Exception {
 
-        given(postService.delete(any(), any())).willReturn(new PostResponse("", 1l));
+        Long postId = 1l;
+
+        given(postService.delete(any(), any())).willReturn(postId);
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf()))
@@ -260,7 +259,7 @@ class PostRestControllerTest {
     @WithMockUser
     void commentWriteSuccess() throws Exception {
         CommentWriteRequest request = new CommentWriteRequest("댓글입니다.");
-        given(postService.writeComment(any(), any(), any())).willReturn(commentGetResponse1);
+        given(postService.writeComment(any(), any(), any())).willReturn(commentDto1);
 
         mockMvc.perform(post("/api/v1/posts/1/comments")
                         .with(csrf())
@@ -310,7 +309,7 @@ class PostRestControllerTest {
     @WithMockUser
     void commentEditSuccess() throws Exception {
         CommentEditRequest request = new CommentEditRequest("댓글입니다.(수정)");
-        given(postService.editComment(any(), any(), any(), any())).willReturn(commentGetResponse1);
+        given(postService.editComment(any(), any(), any(), any())).willReturn(commentDto1);
 
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
                         .with(csrf())
@@ -375,7 +374,7 @@ class PostRestControllerTest {
     @WithAnonymousUser
     void commentEditFail4() throws Exception {
         CommentEditRequest request = new CommentEditRequest("댓글입니다.(수정)");
-        given(postService.editComment(any(), any(), any(), any())).willReturn(commentGetResponse1);
+        given(postService.editComment(any(), any(), any(), any())).willReturn(commentDto1);
 
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
                         .with(csrf())
@@ -389,7 +388,9 @@ class PostRestControllerTest {
     @DisplayName("댓글 삭제 성공 테스트")
     @WithMockUser
     void commentDeleteSuccess() throws Exception {
-        given(postService.deleteComment(any(), any(), any())).willReturn(new CommentResponse("", 1L));
+        Long commentId = 1l;
+
+        given(postService.deleteComment(any(), any(), any())).willReturn(commentId);
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf()))
@@ -440,7 +441,9 @@ class PostRestControllerTest {
     @DisplayName("댓글 삭제 실패 테스트- 인증 실패")
     @WithAnonymousUser
     void commentDeleteFail4() throws Exception {
-        given(postService.deleteComment(any(), any(), any())).willReturn(new CommentResponse("", 1L));
+        Long commentId = 1l;
+
+        given(postService.deleteComment(any(), any(), any())).willReturn(commentId);
 
         mockMvc.perform(delete("/api/v1/posts/1/comments/1")
                         .with(csrf()))

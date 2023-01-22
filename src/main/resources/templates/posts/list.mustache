@@ -1,0 +1,64 @@
+{{>layouts/header}}
+<div id="main">
+
+    <!-- Post -->
+    {{#posts}}
+        <article class="post">
+            <header>
+                <div class="title">
+                    <h3>{{title}}</h3>
+                </div>
+                <div class="meta">
+                    <time class="published" datetime="2015-11-01">{{createdAt}}</time>
+                    <a href="#" class="author"><span class="name">{{userName}}</span></a>
+                </div>
+            </header>
+            <p>{{body}}</p>
+            <footer>
+                <ul class="actions">
+                    <li><a href="/posts/{{id}}" class="button large">자세히 보기</a></li>
+                </ul>
+                <ul class="stats">
+                    <li><a href="#" class="icon solid fa-heart">좋아요</a></li>
+                    <li><a href="#" class="icon solid fa-comment">댓글</a></li>
+                </ul>
+            </footer>
+        </article>
+    {{/posts}}
+
+    <!-- Pagination -->
+    <ul class="actions pagination">
+        <li><a href="/posts/list?page={{previousPage}}" class="button large previous">Previous Page</a></li>
+        <li><a href="/posts/list?page={{nextPage}}" class="button large next">Next Page</a></li>
+    </ul>
+
+</div>
+
+<!-- Sidebar -->
+<section id="sidebar">
+
+    <!-- Intro -->
+    <section id="intro">
+        <a href="#" class="logo"></a>
+        <header>
+            <h2>SNS</h2>
+            <p>나의 일상을 공유하세요</p>
+        </header>
+    </section>
+
+    <!-- Posts List -->
+    <section>
+        <ul class="posts">
+            {{#posts}}
+                <li>
+                    <article>
+                        <header>
+                            <h3><a href="/posts/{{id}}">{{title}}</a></h3>
+                            <time class="published" datetime="2015-10-20">{{createdAt}}</time>
+                        </header>
+                    </article>
+                </li>
+            {{/posts}}
+        </ul>
+    </section>
+{{>layouts/footer}}

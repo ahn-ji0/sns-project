@@ -3,6 +3,7 @@ import com.spring.snsproject.domain.Response;
 import com.spring.snsproject.domain.dto.comment.*;
 import com.spring.snsproject.domain.dto.post.*;
 import com.spring.snsproject.service.PostService;
+import com.spring.snsproject.utils.DateUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,71 +26,81 @@ public class PostRestController {
     @PostMapping()
     @ApiOperation(value="포스트 작성 기능", notes ="포스트 내용을 입력하세요.")
     public Response write(@RequestBody PostWriteRequest postWriteRequest, Authentication authentication){
-        PostResponse postResponse = postService.write(postWriteRequest, authentication.getName());
-        return Response.success(postResponse);
+        PostDto postDto = postService.write(postWriteRequest, authentication.getName());
+        return Response.success(new PostResponse("포스트 등록 완료",postDto.getId()));
     }
 
     @GetMapping()
     @ApiOperation(value="포스트 조회 기능")
     public Response getAll(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<PostGetResponse> postGetResponses = postService.getAll(pageable);
-        return Response.success(postGetResponses);
+        Page<PostDto> postDtos = postService.getAll(pageable);
+
+        return Response.success(postDtos.map(post ->
+                new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUserName(),
+                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt()))));
     }
 
     @GetMapping("/{postId}")
     @ApiOperation(value="포스트 상세 조회 기능", notes ="상세 조회하려는 포스트의 id를 url에 입력하세요.")
     public Response getOne(@PathVariable Long postId){
-        PostGetResponse postGetResponse = postService.getOne(postId);
-        return Response.success(postGetResponse);
+        PostDto postDto = postService.getOne(postId);
+        return Response.success(new PostGetResponse(postDto.getId(), postDto.getTitle(), postDto.getBody(), postDto.getUserName(),
+                DateUtils.dateFormat(postDto.getCreatedAt()), DateUtils.dateFormat(postDto.getLastModifiedAt())));
     }
 
     @PutMapping("/{postId}")
     @ApiOperation(value="포스트 수정 기능", notes ="수정하려는 포스트의 id를 url에 입력하고, 수정 내용을 입력하세요.")
     public Response edit(@PathVariable Long postId, @RequestBody PostEditRequest postEditRequest, Authentication authentication){
-        PostResponse postResponse = postService.edit(postId, postEditRequest, authentication.getName());
-        return Response.success(postResponse);
+        PostDto postDto = postService.edit(postId, postEditRequest, authentication.getName());
+        return Response.success(new PostResponse("포스트 수정 완료",postDto.getId()));
     }
 
     @DeleteMapping("/{postId}")
     @ApiOperation(value="포스트 삭제 기능", notes ="삭제하려는 포스트의 id를 url에 입력하세요")
     public Response delete(@PathVariable Long postId, Authentication authentication){
-        PostResponse postResponse = postService.delete(postId, authentication.getName());
-        return Response.success(postResponse);
+        Long deletedId = postService.delete(postId, authentication.getName());
+        return Response.success(new PostResponse("포스트 삭제 완료", deletedId));
     }
 
     @GetMapping("/my")
     @ApiOperation(value="마이 피드 기능", notes ="나의 피드를 확인하세요")
     public Response myFeed(@PageableDefault(size=20, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication) {
-        Page<PostGetResponse> postGetResponses = postService.myFeed(pageable, authentication.getName());
-        return Response.success(postGetResponses);
+        Page<PostDto> postDtos = postService.myFeed(pageable, authentication.getName());
+        return Response.success(postDtos.map(post ->
+                new PostGetResponse(post.getId(), post.getTitle(), post.getBody(), post.getUserName(),
+                        DateUtils.dateFormat(post.getCreatedAt()), DateUtils.dateFormat(post.getLastModifiedAt()))));
     }
 
     @PostMapping("/{postId}/comments")
     @ApiOperation(value="댓글 작성 기능", notes ="댓글을 입력하세요.")
     public Response writeComment(@PathVariable Long postId, @RequestBody CommentWriteRequest commentWriteRequest, Authentication authentication){
-        CommentGetResponse commentGetResponse = postService.writeComment(postId, commentWriteRequest, authentication.getName());
-        return Response.success(commentGetResponse);
+        CommentDto commentDto = postService.writeComment(postId, commentWriteRequest, authentication.getName());
+        return Response.success(new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(),
+                commentDto.getPostId(), DateUtils.dateFormat(commentDto.getCreatedAt()), DateUtils.dateFormat(commentDto.getLastModifiedAt())));
     }
 
     @GetMapping("/{postId}/comments")
     @ApiOperation(value="댓글 조회 기능")
     public Response getComments(@PathVariable Long postId, @PageableDefault(size=10, sort="createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        Page<CommentGetResponse> comments = postService.getComments(postId, pageable);
-        return Response.success(comments);
+        Page<CommentDto> commentDtos = postService.getComments(postId, pageable);
+        return Response.success(commentDtos.map(comment ->
+                new CommentGetResponse(comment.getId(), comment.getComment(), comment.getUserName(),
+                        comment.getPostId(), DateUtils.dateFormat(comment.getCreatedAt()), DateUtils.dateFormat(comment.getLastModifiedAt()))));
     }
 
     @PutMapping("/{postId}/comments/{commentId}")
     @ApiOperation(value="댓글 수정 기능", notes ="포스트의 id와 수정하려는 댓글의 id를 url에 입력하고, 수정 내용을 입력하세요.")
     public Response editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentEditRequest commentEditRequest, Authentication authentication){
-        CommentGetResponse commentGetResponse = postService.editComment(postId, commentId, commentEditRequest, authentication.getName());
-        return Response.success(commentGetResponse);
+        CommentDto commentDto = postService.editComment(postId, commentId, commentEditRequest, authentication.getName());
+        return Response.success(new CommentGetResponse(commentDto.getId(), commentDto.getComment(), commentDto.getUserName(),
+                commentDto.getPostId(), DateUtils.dateFormat(commentDto.getCreatedAt()), DateUtils.dateFormat(commentDto.getLastModifiedAt())));
     }
 
     @DeleteMapping("/{postId}/comments/{commentId}")
     @ApiOperation(value="댓글 삭제 기능", notes ="포스트의 id와 삭제하려는 댓글의 id를 url에 입력하세요.")
     public Response deleteComment(@PathVariable Long postId, @PathVariable Long commentId, Authentication authentication) {
-        CommentResponse commentResponse = postService.deleteComment(postId, commentId, authentication.getName());
-        return Response.success(commentResponse);
+        Long deletedId = postService.deleteComment(postId, commentId, authentication.getName());
+        return Response.success(new CommentResponse("댓글 삭제 완료", commentId));
     }
 
     @PostMapping("/{postId}/likes")
