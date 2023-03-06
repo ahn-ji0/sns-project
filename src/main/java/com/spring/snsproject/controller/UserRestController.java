@@ -1,6 +1,7 @@
 package com.spring.snsproject.controller;
 
 import com.spring.snsproject.domain.Response;
+import com.spring.snsproject.domain.dto.user.UserSearchResponse;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeRequest;
 import com.spring.snsproject.domain.dto.rolechange.RoleChangeResponse;
 import com.spring.snsproject.domain.dto.token.TokenResponse;
@@ -39,5 +40,11 @@ public class UserRestController {
     public Response changeRole(@PathVariable Long id, @RequestBody RoleChangeRequest roleChangeRequest){
         UserDto userDto = userService.changeRole(id, roleChangeRequest);
         return Response.success(new RoleChangeResponse(userDto.getId(), userDto.getUserName(), userDto.getRole()));
+    }
+
+    @GetMapping("/{userName}")
+    public Response searchUser(@PathVariable String userName){
+        UserDto userDto = userService.searchUser(userName);
+        return Response.success(new UserSearchResponse(userDto.getId(), userDto.getUserName()));
     }
 }

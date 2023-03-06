@@ -78,4 +78,11 @@ public class UserService {
         User roleChangedUser =  userRepository.save(savedUser);
         return User.of(roleChangedUser);
     }
+
+    public UserDto searchUser(String userName) {
+        User savedUser = userRepository.findByUserName(userName).orElseThrow(()->
+            new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        return User.of(savedUser);
+    }
 }
